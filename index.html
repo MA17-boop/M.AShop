@@ -2,185 +2,259 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Toko Vian PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toko M.A17</title>
 
 <style>
-body {
-  font-family: Arial;
-  margin: 0;
-  background: #0f172a;
-  color: white;
-}
-
-header {
-  background: #1e293b;
-  padding: 15px;
-  text-align: center;
-}
-
-nav button {
-  margin: 5px;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.container {
-  padding: 20px;
-}
-
-input {
-  display: block;
-  margin: 10px 0;
-  padding: 10px;
-  width: 100%;
-  border-radius: 8px;
-  border: none;
-}
-
-button {
-  background: #22c55e;
-  color: white;
-}
-
-.card {
-  background: #1e293b;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 10px;
-}
-
-img {
-  border-radius: 10px;
-}
+body {margin:0;font-family:Arial;background:#f1f5f9;}
+.navbar {background:#22c55e;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center;}
+.navbar input {padding:8px;border-radius:8px;border:none;}
+.menu {display:flex;gap:10px;padding:10px;}
+.menu button {padding:10px;border:none;border-radius:10px;background:#0f172a;color:white;}
+.grid {display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}
+.card {background:white;padding:10px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+.card img {width:100%;border-radius:10px;}
+.harga {color:#22c55e;font-weight:bold;}
+input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:8px;border:none;}
+button {cursor:pointer}
+.badge {background:red;color:white;padding:2px 6px;border-radius:10px;font-size:12px;}
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>Toko Vian 🛒</h1>
-  <nav>
-    <button onclick="showPage('home')">Home</button>
-    <button onclick="showPage('tambah')">Tambah Produk</button>
-    <button onclick="showPage('produk')">Daftar Produk</button>
-  </nav>
-</header>
+<div class="navbar">
+  <b>Toko M.A17 🛒</b>
+  <input type="text" placeholder="Cari produk..." oninput="cari(this.value)">
+</div>
 
-<div class="container">
+<div class="menu">
+  <button onclick="show('home')">Home</button>
+  <button onclick="show('produk')">Produk</button>
+  <button onclick="show('cart')">Keranjang (<span id="cartCount">0</span>)</button>
+  <button onclick="show('fav')">Wishlist</button>
+  <button onclick="show('riwayat')">Riwayat</button>
+  <button onclick="show('admin')">Admin</button>
+</div>
 
 <!-- HOME -->
 <div id="home">
-  <h2>Selamat Datang 🚀</h2>
-  <p>Ini website toko buatan Vian sendiri!</p>
-</div>
-
-<!-- TAMBAH -->
-<div id="tambah" style="display:none;">
-  <h2>Tambah Produk</h2>
-
-  <input type="text" id="nama" placeholder="Nama Produk">
-  <input type="number" id="harga" placeholder="Harga">
-  <input type="file" id="gambar">
-
-  <button onclick="simpan()">Simpan</button>
+  <h2 style="padding:10px;">🔥 Produk Terbaru</h2>
+  <div class="grid" id="homeList"></div>
 </div>
 
 <!-- PRODUK -->
 <div id="produk" style="display:none;">
-  <h2>Daftar Produk</h2>
-  <div id="list"></div>
+  <h2 style="padding:10px;">📦 Semua Produk</h2>
+  <div class="grid" id="produkList"></div>
 </div>
 
+<!-- DETAIL -->
+<div id="detail" style="display:none;padding:10px;"></div>
+
+<!-- CART -->
+<div id="cart" style="display:none;padding:10px;">
+  <h2>🛍️ Keranjang</h2>
+  <div id="cartList"></div>
+  <h3 id="total"></h3>
+
+  <h3>Data Pembeli</h3>
+  <input id="namaPembeli" placeholder="Nama">
+  <textarea id="alamat" placeholder="Alamat"></textarea>
+
+  <button onclick="checkout()">Checkout</button>
+</div>
+
+<!-- WISHLIST -->
+<div id="fav" style="display:none;padding:10px;">
+  <h2>⭐ Wishlist</h2>
+  <div id="favList"></div>
+</div>
+
+<!-- RIWAYAT -->
+<div id="riwayat" style="display:none;padding:10px;">
+  <h2>📜 Riwayat Pesanan</h2>
+  <div id="riwayatList"></div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" style="display:none;padding:10px;">
+  <h2>Login Admin</h2>
+  <input type="password" id="pass" placeholder="Password">
+  <button onclick="login()">Login</button>
+
+  <div id="panel" style="display:none;">
+    <h3>Tambah Produk</h3>
+    <input type="text" id="nama" placeholder="Nama Produk">
+    <input type="number" id="harga" placeholder="Harga">
+    <input type="number" id="stok" placeholder="Stok">
+    <input type="file" id="gambar">
+    <button onclick="tambah()">Tambah</button>
+
+    <h3>Kelola Produk</h3>
+    <div id="adminList"></div>
+  </div>
 </div>
 
 <script>
-let editIndex = null;
+let data = JSON.parse(localStorage.getItem("produk")) || [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let fav = JSON.parse(localStorage.getItem("fav")) || [];
+let riwayat = JSON.parse(localStorage.getItem("riwayat")) || [];
 
-function showPage(page) {
-  document.getElementById("home").style.display = "none";
-  document.getElementById("tambah").style.display = "none";
-  document.getElementById("produk").style.display = "none";
-
-  document.getElementById(page).style.display = "block";
-
-  if(page === "produk") tampilkan();
+function show(p){
+  ["home","produk","cart","admin","fav","detail","riwayat"].forEach(id=>{
+    document.getElementById(id).style.display="none";
+  });
+  document.getElementById(p).style.display="block";
+  tampil(); tampilCart(); tampilFav(); tampilRiwayat(); tampilAdmin();
 }
 
-function simpan() {
+function tambah(){
   let nama = document.getElementById("nama").value;
   let harga = document.getElementById("harga").value;
+  let stok = document.getElementById("stok").value;
   let file = document.getElementById("gambar").files[0];
 
   let reader = new FileReader();
-
-  reader.onload = function() {
-    let data = JSON.parse(localStorage.getItem("produk")) || [];
-
-    if (editIndex !== null) {
-      data[editIndex] = {
-        nama: nama,
-        harga: harga,
-        gambar: reader.result
-      };
-      editIndex = null;
-    } else {
-      data.push({
-        nama: nama,
-        harga: harga,
-        gambar: reader.result
-      });
-    }
-
+  reader.onload = function(){
+    data.push({nama,harga,stok,gambar:reader.result});
     localStorage.setItem("produk", JSON.stringify(data));
-
-    alert("Berhasil disimpan!");
-    showPage("produk");
-  };
-
-  if (file) {
-    reader.readAsDataURL(file);
-  } else {
-    alert("Pilih gambar!");
+    alert("Produk ditambahkan");
+    tampil();
   }
+  if(file){reader.readAsDataURL(file);} else alert("Pilih gambar");
 }
 
-function tampilkan() {
-  let data = JSON.parse(localStorage.getItem("produk")) || [];
-  let list = document.getElementById("list");
-  list.innerHTML = "";
+function tampil(){
+  let home=document.getElementById("homeList");
+  let produk=document.getElementById("produkList");
+  home.innerHTML=""; produk.innerHTML="";
 
-  data.forEach((p, i) => {
-    list.innerHTML += `
-      <div class="card">
-        <img src="${p.gambar}" width="100"><br>
-        <b>${p.nama}</b><br>
-        Rp ${p.harga}<br><br>
-        <button onclick="edit(${i})">Edit</button>
-        <button onclick="hapus(${i})">Hapus</button>
-      </div>
-    `;
+  data.slice(-4).reverse().forEach((p,i)=>home.innerHTML+=card(p,i));
+  data.forEach((p,i)=>produk.innerHTML+=card(p,i));
+}
+
+function card(p,i){
+  return `
+  <div class="card">
+    <img src="${p.gambar}" onclick="detail(${i})">
+    <b>${p.nama}</b>
+    <div class="harga">Rp ${p.harga}</div>
+    <small>Stok: ${p.stok}</small><br>
+    <button onclick="addCart(${i})">+ Keranjang</button>
+    <button onclick="addFav(${i})">⭐</button>
+  </div>`;
+}
+
+function detail(i){
+  let p=data[i];
+  show('detail');
+  document.getElementById("detail").innerHTML=`
+    <h2>${p.nama}</h2>
+    <img src="${p.gambar}" width="200"><br>
+    <b>Rp ${p.harga}</b><br>
+    Stok: ${p.stok}<br><br>
+    <button onclick="addCart(${i})">Beli</button>
+  `;
+}
+
+function addCart(i){
+  cart.push(data[i]);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+}
+
+function tampilCart(){
+  let list=document.getElementById("cartList");
+  let total=0;
+  list.innerHTML="";
+  cart.forEach((p,i)=>{
+    total+=parseInt(p.harga);
+    list.innerHTML+=`<div class="card">${p.nama} - Rp ${p.harga}
+    <button onclick="hapusCart(${i})">Hapus</button></div>`;
+  });
+  document.getElementById("total").innerText="Total: Rp "+total;
+  updateCartCount();
+}
+
+function hapusCart(i){
+  cart.splice(i,1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  tampilCart();
+}
+
+function checkout(){
+  let nama=document.getElementById("namaPembeli").value;
+  let alamat=document.getElementById("alamat").value;
+
+  if(!nama||!alamat){alert("Isi data dulu!");return;}
+
+  riwayat.push({nama,alamat,cart});
+  localStorage.setItem("riwayat", JSON.stringify(riwayat));
+
+  cart=[];
+  localStorage.setItem("cart", JSON.stringify(cart));
+  tampilCart();
+  alert("Pesanan berhasil!");
+}
+
+function tampilRiwayat(){
+  let list=document.getElementById("riwayatList");
+  list.innerHTML="";
+  riwayat.forEach(r=>{
+    list.innerHTML+=`<div class="card">${r.nama}<br>${r.alamat}<br>Item: ${r.cart.length}</div>`;
   });
 }
 
-function hapus(i) {
-  let data = JSON.parse(localStorage.getItem("produk")) || [];
-  data.splice(i, 1);
+function addFav(i){
+  fav.push(data[i]);
+  localStorage.setItem("fav", JSON.stringify(fav));
+}
+
+function tampilFav(){
+  let list=document.getElementById("favList");
+  list.innerHTML="";
+  fav.forEach(p=>{
+    list.innerHTML+=`<div class="card">${p.nama}</div>`;
+  });
+}
+
+function tampilAdmin(){
+  let list=document.getElementById("adminList");
+  list.innerHTML="";
+  data.forEach((p,i)=>{
+    list.innerHTML+=`<div class="card">${p.nama}
+    <button onclick="hapusProduk(${i})">Hapus</button></div>`;
+  });
+}
+
+function hapusProduk(i){
+  data.splice(i,1);
   localStorage.setItem("produk", JSON.stringify(data));
-  tampilkan();
+  tampil();
 }
 
-function edit(i) {
-  let data = JSON.parse(localStorage.getItem("produk")) || [];
-  let p = data[i];
-
-  document.getElementById("nama").value = p.nama;
-  document.getElementById("harga").value = p.harga;
-
-  editIndex = i;
-  showPage("tambah");
+function login(){
+  if(document.getElementById("pass").value==="admin123"){
+    document.getElementById("panel").style.display="block";
+  } else alert("Password salah");
 }
+
+function cari(t){
+  let produk=document.getElementById("produkList");
+  produk.innerHTML="";
+  data.filter(p=>p.nama.toLowerCase().includes(t.toLowerCase()))
+  .forEach((p,i)=>produk.innerHTML+=card(p,i));
+  show('produk');
+}
+
+function updateCartCount(){
+  document.getElementById("cartCount").innerText=cart.length;
+}
+
+tampil();
+updateCartCount();
 </script>
 
 </body>
