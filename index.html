@@ -3,102 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toko M.A17</title>
+<title>Toko M.A17 Marketplace</title>
 
 <style>
 body {margin:0;font-family:Arial;background:#f5f5f5;}
-
-/* LANDING */
 #landing {
   height:100vh;
-  background: linear-gradient(135deg,#ff5722,#ff9800);
-  color:white;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  animation: fadeIn 1s;
+  background:linear-gradient(135deg,#ff5722,#ff9800);
+  color:white;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;
 }
-#landing button {
-  padding:15px 30px;
-  border:none;
-  border-radius:30px;
-  background:white;
-  color:#ff5722;
-  font-size:16px;
-}
-
-/* NAV */
 .navbar {background:#ff5722;color:white;padding:15px;display:flex;justify-content:space-between;}
-.navbar input {padding:8px;border-radius:20px;border:none;}
-
-/* MENU */
 .menu {display:flex;justify-content:space-around;background:white;padding:10px;}
 .menu button {border:none;background:none;font-weight:bold;}
-
-/* GRID */
 .grid {display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}
-
-/* CARD */
 .card {background:white;border-radius:15px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
 .card img {width:100%;}
-.card .info {padding:10px;}
+.info {padding:10px;}
 .harga {color:#ff5722;font-weight:bold;}
-.buy {background:#ff5722;color:white;border:none;width:100%;padding:10px;}
-
+.buy {background:#ff5722;color:white;border:none;width:100%;padding:10px;margin-top:5px;}
 input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none;}
-
-@keyframes fadeIn {
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
+#notif {
+position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none;
 }
 </style>
+
+<!-- FIREBASE CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
 </head>
 
 <body>
 
-<!-- LANDING -->
 <div id="landing">
-  <h1>🛒 Toko M.A17</h1>
-  <p>
-    Selamat datang di Toko M.A17 🔥<br><br>
-    Menyediakan produk berkualitas dengan harga terbaik 💥  
-    Belanja mudah langsung dari HP kamu!
-  </p>
-  <button onclick="masuk()">Mulai Belanja 🚀</button>
+  <h1>🛒 Toko M.A17 Marketplace</h1>
+  <button onclick="masuk()">Masuk 🚀</button>
 </div>
 
-<!-- MAIN -->
 <div id="main" style="display:none;">
 
 <div class="navbar">
   <b>M.A17</b>
-  <input type="text" placeholder="Cari produk..." oninput="cari(this.value)">
+  <input type="text" placeholder="Cari..." oninput="cari(this.value)">
 </div>
 
 <div class="menu">
   <button onclick="show('home')">Home</button>
   <button onclick="show('produk')">Produk</button>
   <button onclick="show('cart')">Keranjang</button>
-  <button onclick="show('admin')">Admin</button>
+  <button onclick="show('sellerLogin')">Penjual</button>
 </div>
 
-<!-- HOME -->
-<div id="home">
-  <div class="grid" id="homeList"></div>
-</div>
+<div id="home"><div class="grid" id="homeList"></div></div>
+<div id="produk" style="display:none;"><div class="grid" id="produkList"></div></div>
 
-<!-- PRODUK -->
-<div id="produk" style="display:none;">
-  <div class="grid" id="produkList"></div>
-</div>
-
-<!-- CART -->
 <div id="cart" style="display:none;padding:10px;">
-  <h2>🛍️ Keranjang</h2>
+  <h2>Keranjang</h2>
   <div id="cartList"></div>
-  <h3 id="total"></h3>
+  <h3 id="totalText"></h3>
 
   <input id="namaPembeli" placeholder="Nama">
   <textarea id="alamat" placeholder="Alamat"></textarea>
@@ -106,27 +70,54 @@ input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:n
   <button onclick="checkout()" class="buy">Checkout</button>
 </div>
 
-<!-- ADMIN -->
-<div id="admin" style="display:none;padding:10px;">
-  <h2>Login Admin</h2>
-  <input type="password" id="pass" placeholder="Password">
-  <button onclick="login()">Login</button>
+<div id="sellerLogin" style="display:none;padding:10px;">
+  <h2>Login Penjual</h2>
+  <input id="sellerWA" placeholder="Nomor WA">
+  <button onclick="loginSeller()">Masuk</button>
+</div>
 
-  <div id="panel" style="display:none;">
-    <h3>Tambah Produk</h3>
-    <input id="nama" placeholder="Nama Produk">
-    <input id="harga" type="number" placeholder="Harga">
-    <textarea id="deskripsi" placeholder="Deskripsi produk"></textarea>
-    <input type="file" id="gambar">
-    <button onclick="tambah()">Upload Produk</button>
-  </div>
+<div id="sellerPanel" style="display:none;padding:10px;">
+  <h2>Panel Penjual</h2>
+
+  <input id="nama" placeholder="Nama Produk">
+  <input id="harga" type="number" placeholder="Harga">
+  <input id="komisi" type="number" placeholder="Komisi">
+  <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
+  <input type="file" id="gambar">
+
+  <button onclick="tambahProduk()">Upload</button>
 </div>
 
 </div>
+
+<div id="notif"></div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("produk")) || [];
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+/* 🔥 GANTI DENGAN CONFIG FIREBASE KAMU */
+const firebaseConfig = {
+  apiKey: "ISI_APIKEY",
+  authDomain: "ISI_DOMAIN",
+  databaseURL: "ISI_DB_URL",
+  projectId: "ISI_PROJECT",
+  storageBucket: "ISI_BUCKET",
+  messagingSenderId: "ISI_SENDER",
+  appId: "ISI_APPID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let data = [];
+let cart = [];
+let currentSeller = "";
+
+/* NOTIF */
+function notif(text){
+  let n=document.getElementById("notif");
+  n.innerText=text;
+  n.style.display="block";
+  setTimeout(()=>n.style.display="none",2000);
+}
 
 /* MASUK */
 function masuk(){
@@ -136,46 +127,67 @@ function masuk(){
 
 /* NAV */
 function show(p){
-  ["home","produk","cart","admin"].forEach(id=>{
+  ["home","produk","cart","sellerLogin","sellerPanel"].forEach(id=>{
     document.getElementById(id).style.display="none";
   });
   document.getElementById(p).style.display="block";
-  tampil(); tampilCart();
+}
+
+/* LOGIN SELLER */
+function loginSeller(){
+  currentSeller = sellerWA.value;
+  sellerPanel.style.display="block";
+  notif("Login berhasil");
 }
 
 /* TAMBAH PRODUK */
-function tambah(){
-  let nama = nama.value;
-  let harga = harga.value;
-  let deskripsi = document.getElementById("deskripsi").value;
+function tambahProduk(){
   let file = gambar.files[0];
+  if(!file){notif("Pilih gambar");return;}
 
   let reader = new FileReader();
   reader.onload = function(){
-    data.push({nama,harga,deskripsi,gambar:reader.result});
-    localStorage.setItem("produk", JSON.stringify(data));
-    alert("Produk ditambahkan!");
-    tampil();
+    let produk = {
+      nama:nama.value,
+      harga:harga.value,
+      komisi:komisi.value,
+      deskripsi:deskripsi.value,
+      wa:currentSeller,
+      gambar:reader.result
+    };
+
+    db.ref("produk").push(produk);
+    notif("Produk diupload!");
   }
-  if(file) reader.readAsDataURL(file);
+  reader.readAsDataURL(file);
 }
+
+/* AMBIL DATA */
+db.ref("produk").on("value", snap=>{
+  data=[];
+  snap.forEach(d=>data.push(d.val()));
+  tampil();
+});
 
 /* TAMPIL */
 function tampil(){
-  let home = document.getElementById("homeList");
-  let produk = document.getElementById("produkList");
+  let home=document.getElementById("homeList");
+  let produk=document.getElementById("produkList");
   home.innerHTML=""; produk.innerHTML="";
 
   data.forEach((p,i)=>{
-    let html = `
+    let harga = parseInt(p.harga)+parseInt(p.komisi||0);
+
+    let html=`
     <div class="card">
       <img src="${p.gambar}">
       <div class="info">
         <b>${p.nama}</b>
-        <div class="harga">Rp ${p.harga}</div>
-        <small>${p.deskripsi || ""}</small>
+        <div class="harga">Rp ${harga}</div>
+        <small>${p.deskripsi}</small>
       </div>
       <button class="buy" onclick="addCart(${i})">Beli</button>
+      <button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>
     </div>`;
     home.innerHTML+=html;
     produk.innerHTML+=html;
@@ -185,56 +197,44 @@ function tampil(){
 /* CART */
 function addCart(i){
   cart.push(data[i]);
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Ditambahkan ke keranjang");
+  notif("Masuk keranjang");
 }
 
 function tampilCart(){
-  let list=document.getElementById("cartList");
   let total=0;
-  list.innerHTML="";
-  cart.forEach((p,i)=>{
-    total+=parseInt(p.harga);
-    list.innerHTML+=`${p.nama} - Rp ${p.harga}<br>`;
+  let list="";
+  cart.forEach(p=>{
+    let harga = parseInt(p.harga)+parseInt(p.komisi||0);
+    total+=harga;
+    list+=p.nama+" - Rp "+harga+"<br>";
   });
-  document.getElementById("total").innerText="Total: Rp "+total;
+  cartList.innerHTML=list;
+  totalText.innerText="Total: Rp "+total;
 }
 
-/* CHECKOUT WA KEREN */
+/* CHECKOUT */
 function checkout(){
-  let nama = document.getElementById("namaPembeli").value;
-  let alamat = document.getElementById("alamat").value;
+  let nama=document.getElementById("namaPembeli").value;
+  let alamat=document.getElementById("alamat").value;
 
-  if(!nama || !alamat){alert("Isi data dulu!");return;}
+  if(!nama || !alamat){notif("Isi data!");return;}
 
-  let pesan = "🛒 *PESANAN TOKO M.A17*%0A%0A";
-  pesan += "👤 Nama: " + nama + "%0A";
-  pesan += "📍 Alamat: " + alamat + "%0A%0A";
-  pesan += "📦 *Detail Pesanan:*%0A";
+  cart.forEach(p=>{
+    let harga=parseInt(p.harga)+parseInt(p.komisi||0);
 
-  let total = 0;
-  cart.forEach((p,i)=>{
-    pesan += (i+1)+". "+p.nama+" - Rp "+p.harga+"%0A";
-    total += parseInt(p.harga);
+    let pesan = "Pesanan%0A"+nama+"%0A"+alamat+"%0A"+p.nama+" Rp"+harga;
+
+    window.open("https://wa.me/"+p.wa+"?text="+pesan);
   });
-
-  pesan += "%0A💰 *Total: Rp "+total+"*%0A%0A";
-  pesan += "Terima kasih sudah belanja 🙏";
-
-  let nomor = "6283825428193";
-
-  window.open("https://wa.me/"+nomor+"?text="+pesan);
 
   cart=[];
-  localStorage.setItem("cart", JSON.stringify(cart));
   tampilCart();
+  notif("Pesanan dikirim!");
 }
 
-/* LOGIN */
-function login(){
-  if(pass.value==="alfian200817"){
-    panel.style.display="block";
-  } else alert("Password salah");
+/* CHAT */
+function chat(wa,nama){
+  window.open("https://wa.me/"+wa+"?text=Halo saya tertarik "+nama);
 }
 
 /* SEARCH */
@@ -242,20 +242,11 @@ function cari(t){
   let produk=document.getElementById("produkList");
   produk.innerHTML="";
   data.filter(p=>p.nama.toLowerCase().includes(t.toLowerCase()))
-  .forEach((p,i)=>{
-    produk.innerHTML+=`
-    <div class="card">
-      <img src="${p.gambar}">
-      <div class="info">
-        <b>${p.nama}</b>
-        <div class="harga">Rp ${p.harga}</div>
-      </div>
-    </div>`;
+  .forEach(p=>{
+    produk.innerHTML+=`<div class="card"><img src="${p.gambar}"><div class="info">${p.nama}</div></div>`;
   });
   show('produk');
 }
-
-tampil();
 </script>
 
 </body>
