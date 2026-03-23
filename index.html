@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -6,97 +6,170 @@
 <title>Toko M.A17</title>
 
 <style>
-body {margin:0;font-family:Arial;background:#f1f5f9;}
-.navbar {background:#22c55e;color:white;padding:15px;display:flex;justify-content:space-between;}
-.menu {display:flex;gap:10px;padding:10px;}
-.menu button {padding:10px;border:none;border-radius:10px;background:#0f172a;color:white;}
-.grid {display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}
-.card {background:white;padding:10px;border-radius:15px;}
-.card img {width:100%;border-radius:10px;}
-.harga {color:#22c55e;font-weight:bold;}
-input,textarea {width:100%;padding:10px;margin:5px 0;}
+body {margin:0;font-family:Arial;background:#f5f5f5;}
+
+/* LANDING */
+#landing {
+  height:100vh;
+  background: linear-gradient(135deg,#ff5722,#ff9800);
+  color:white;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  animation: fadeIn 1s ease;
+}
+#landing h1 {font-size:32px;margin-bottom:10px;}
+#landing p {max-width:300px;}
+#landing button {
+  margin-top:20px;
+  padding:15px 30px;
+  border:none;
+  border-radius:30px;
+  background:white;
+  color:#ff5722;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+#landing button:hover {transform:scale(1.1);}
+
+/* NAVBAR */
+.navbar {
+  background:#ff5722;
+  color:white;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+}
+.navbar input {
+  padding:8px;
+  border:none;
+  border-radius:20px;
+  width:150px;
+}
+
+/* MENU */
+.menu {
+  display:flex;
+  justify-content:space-around;
+  padding:10px;
+  background:white;
+}
+.menu button {
+  border:none;
+  background:none;
+  font-weight:bold;
+}
+
+/* GRID */
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  padding:10px;
+}
+
+/* CARD */
+.card {
+  background:white;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  transition:0.3s;
+}
+.card:hover {transform:translateY(-5px);}
+.card img {width:100%;}
+.card .info {padding:10px;}
+.harga {color:#ff5722;font-weight:bold;}
+button.buy {
+  width:100%;
+  border:none;
+  padding:10px;
+  background:#ff5722;
+  color:white;
+}
+
+/* CART */
+input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none;}
+
+/* ANIMASI */
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
+}
+.fade {animation: fadeIn 0.5s ease;}
 </style>
 </head>
 
 <body>
 
+<!-- LANDING -->
+<div id="landing">
+  <h1>🛒 Toko M.A17</h1>
+  <p>
+    Selamat datang di toko online modern dengan harga terbaik 🔥  
+    Belanja mudah, cepat, dan langsung kirim ke WhatsApp!
+  </p>
+  <button onclick="masuk()">Mulai Belanja 🚀</button>
+</div>
+
+<!-- MAIN -->
+<div id="main" style="display:none;">
+
 <div class="navbar">
-  <b>Toko M.A17 🛒</b>
-  <input type="text" placeholder="Cari..." oninput="cari(this.value)">
+  <b>M.A17</b>
+  <input type="text" placeholder="Cari produk..." oninput="cari(this.value)">
 </div>
 
 <div class="menu">
   <button onclick="show('home')">Home</button>
   <button onclick="show('produk')">Produk</button>
   <button onclick="show('cart')">Keranjang</button>
-  <button onclick="show('admin')">Admin</button>
 </div>
 
-<!-- HOME -->
-<div id="home">
-  <h2 style="padding:10px;">🔥 Produk</h2>
+<div id="home" class="fade">
   <div class="grid" id="homeList"></div>
 </div>
 
-<!-- PRODUK -->
-<div id="produk" style="display:none;">
+<div id="produk" style="display:none;" class="fade">
   <div class="grid" id="produkList"></div>
 </div>
 
-<!-- CART -->
-<div id="cart" style="display:none;padding:10px;">
-  <h2>🛍️ Keranjang</h2>
+<div id="cart" style="display:none;padding:10px;" class="fade">
+  <h2>Keranjang</h2>
   <div id="cartList"></div>
   <h3 id="total"></h3>
 
   <input id="namaPembeli" placeholder="Nama">
   <textarea id="alamat" placeholder="Alamat"></textarea>
 
-  <button onclick="checkout()">Checkout WhatsApp</button>
+  <button onclick="checkout()" class="buy">Checkout</button>
 </div>
 
-<!-- ADMIN -->
-<div id="admin" style="display:none;padding:10px;">
-  <h2>Login Admin</h2>
-  <input type="password" id="pass" placeholder="Password">
-  <button onclick="login()">Login</button>
-
-  <div id="panel" style="display:none;">
-    <h3>Tambah Produk</h3>
-    <input type="text" id="nama" placeholder="Nama Produk">
-    <input type="number" id="harga" placeholder="Harga">
-    <input type="file" id="gambar">
-    <button onclick="tambah()">Tambah</button>
-  </div>
 </div>
 
 <script>
 let data = JSON.parse(localStorage.getItem("produk")) || [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+/* MASUK */
+function masuk(){
+  document.getElementById("landing").style.display="none";
+  document.getElementById("main").style.display="block";
+}
+
+/* NAV */
 function show(p){
-  ["home","produk","cart","admin"].forEach(id=>{
+  ["home","produk","cart"].forEach(id=>{
     document.getElementById(id).style.display="none";
   });
   document.getElementById(p).style.display="block";
   tampil(); tampilCart();
 }
 
-function tambah(){
-  let nama=document.getElementById("nama").value;
-  let harga=document.getElementById("harga").value;
-  let file=document.getElementById("gambar").files[0];
-
-  let reader=new FileReader();
-  reader.onload=function(){
-    data.push({nama,harga,gambar:reader.result});
-    localStorage.setItem("produk", JSON.stringify(data));
-    alert("Produk ditambahkan!");
-    tampil();
-  }
-  if(file){reader.readAsDataURL(file);} else alert("Pilih gambar");
-}
-
+/* TAMPIL */
 function tampil(){
   let home=document.getElementById("homeList");
   let produk=document.getElementById("produkList");
@@ -104,21 +177,24 @@ function tampil(){
 
   data.forEach((p,i)=>{
     let html=`
-    <div class="card">
+    <div class="card fade">
       <img src="${p.gambar}">
-      <b>${p.nama}</b>
-      <div class="harga">Rp ${p.harga}</div>
-      <button onclick="addCart(${i})">+ Keranjang</button>
+      <div class="info">
+        <b>${p.nama}</b>
+        <div class="harga">Rp ${p.harga}</div>
+      </div>
+      <button class="buy" onclick="addCart(${i})">Beli</button>
     </div>`;
     home.innerHTML+=html;
     produk.innerHTML+=html;
   });
 }
 
+/* CART */
 function addCart(i){
   cart.push(data[i]);
   localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Masuk keranjang");
+  alert("Ditambahkan");
 }
 
 function tampilCart(){
@@ -127,51 +203,25 @@ function tampilCart(){
   list.innerHTML="";
   cart.forEach((p,i)=>{
     total+=parseInt(p.harga);
-    list.innerHTML+=`
-    <div>${p.nama} - Rp ${p.harga}
-    <button onclick="hapusCart(${i})">Hapus</button></div>`;
+    list.innerHTML+=`<div>${p.nama} - Rp ${p.harga}</div>`;
   });
   document.getElementById("total").innerText="Total: Rp "+total;
 }
 
-function hapusCart(i){
-  cart.splice(i,1);
-  localStorage.setItem("cart", JSON.stringify(cart));
-  tampilCart();
-}
-
+/* CHECKOUT */
 function checkout(){
   let nama=document.getElementById("namaPembeli").value;
   let alamat=document.getElementById("alamat").value;
 
-  if(!nama||!alamat){alert("Isi data dulu!");return;}
-
-  let pesan="🛒 PESANAN%0A";
-  pesan+="Nama:"+nama+"%0AAlamat:"+alamat+"%0A";
-
-  let total=0;
-  cart.forEach((p,i)=>{
-    pesan+=(i+1)+". "+p.nama+" Rp"+p.harga+"%0A";
-    total+=parseInt(p.harga);
-  });
-
-  pesan+="Total: Rp "+total;
+  let pesan=`Pesanan%0A${nama}%0A${alamat}%0A`;
+  cart.forEach(p=>pesan+=p.nama+"%0A");
 
   let nomor="6283825428193";
 
   window.open("https://wa.me/"+nomor+"?text="+pesan);
-
-  cart=[];
-  localStorage.setItem("cart", JSON.stringify(cart));
-  tampilCart();
 }
 
-function login(){
-  if(document.getElementById("pass").value==="admin123"){
-    document.getElementById("panel").style.display="block";
-  } else alert("Password salah");
-}
-
+/* SEARCH */
 function cari(t){
   let produk=document.getElementById("produkList");
   produk.innerHTML="";
@@ -180,8 +230,10 @@ function cari(t){
     produk.innerHTML+=`
     <div class="card">
       <img src="${p.gambar}">
-      <b>${p.nama}</b>
-      <div class="harga">Rp ${p.harga}</div>
+      <div class="info">
+        <b>${p.nama}</b>
+        <div class="harga">Rp ${p.harga}</div>
+      </div>
     </div>`;
   });
   show('produk');
