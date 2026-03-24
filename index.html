@@ -6,23 +6,19 @@
 <title>MA17 Marketplace HP</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body{margin:0;padding:0;font-family:'Poppins',sans-serif;transition:0.3s;background:#111;color:#fff;}
+body{margin:0;padding:0;font-family:'Poppins',sans-serif;background:#111;color:#fff;}
 h1,h2,h3{text-align:center;margin:10px 0;}
-input,button,select{padding:8px;margin:5px;border-radius:5px;border:none;outline:none;}
+input,button,select,textarea{padding:8px;margin:5px;border-radius:5px;border:none;outline:none;}
 button{cursor:pointer;}
 .container{display:flex;flex-wrap:wrap;justify-content:center;}
-.card{background:#222;padding:15px;margin:10px;border-radius:12px;width:220px;transition:0.4s;position:relative;overflow:hidden;}
+.card{background:#222;padding:15px;margin:10px;border-radius:12px;width:220px;position:relative;overflow:hidden;transition:0.4s;}
 .card:hover{transform:scale(1.05);box-shadow:0 0 25px #f9a825;}
 .card img{width:100%;height:180px;border-radius:5px;object-fit:cover;transition:0.5s;}
-.card:hover img{transform:scale(1.1);}
 .ribbon{position:absolute;top:10px;left:-5px;background:red;color:#fff;padding:5px 10px;font-size:0.8rem;font-weight:bold;transform:rotate(-15deg);}
-.card h3{margin:5px;color:#ffc107;}
-.card p{margin:5px;}
 #loginBox,#signupBox,#adminBox,#shopBox,#cartBox{display:none;flex-direction:column;align-items:center;padding:30px;max-width:450px;margin:20px auto;background:#111;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.7);}
-input[type="text"],input[type="password"],input[type="number"],select,input[type="file"]{width:100%;background:#222;color:#fff;}
+input[type="text"],input[type="password"],input[type="number"],input[type="file"],textarea{width:100%;background:#222;color:#fff;}
 input[type="submit"],button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);color:#fff;font-weight:600;transition:0.3s;}
 input[type="submit"]:hover,button:hover{transform:scale(1.05);}
-#searchInput{width:220px;}
 table{width:95%;border-collapse:collapse;margin-top:10px;}
 th,td{padding:10px;border:1px solid #333;text-align:left;}
 th{background:#222;}
@@ -63,12 +59,14 @@ th{background:#222;}
 <input type="text" id="namaBarang" placeholder="Nama Barang">
 <input type="number" id="hargaBarang" placeholder="Harga">
 <input type="file" id="fotoBarang">
-<input type="number" id="diskonBarang" placeholder="Diskon (%)">
+<input type="text" id="waPenjual" placeholder="Nomor HP Penjual (mulai 8...)">
+<textarea id="alamatPenjual" placeholder="Alamat Penjual"></textarea>
 <select id="kategoriBarang"></select>
 <button id="tambahBarang">Tambah Barang</button>
+
 <h3>Daftar Barang</h3>
 <table>
-<thead><tr><th>No</th><th>Nama</th><th>Harga</th><th>Diskon</th><th>Kategori</th><th>Foto</th><th>Aksi</th></tr></thead>
+<thead><tr><th>No</th><th>Nama</th><th>Harga</th><th>Alamat</th><th>WA</th><th>Kategori</th><th>Foto</th><th>Aksi</th></tr></thead>
 <tbody id="tabelBarang"></tbody>
 </table>
 </div>
@@ -103,7 +101,6 @@ let barangList=JSON.parse(localStorage.getItem('barangList'))||[];
 let cart=JSON.parse(localStorage.getItem('cart'))||{};
 let currentUser=localStorage.getItem('currentUser');
 const notification=document.getElementById('notification');
-const waNumber="628123456789"; // Ganti nomor WA
 
 // ===== Utils =====
 function showNotification(msg){notification.innerText=msg;notification.style.display='block';setTimeout(()=>{notification.style.display='none';},2000);}
@@ -154,18 +151,20 @@ document.getElementById('tambahBarang').addEventListener('click',()=>{
   const h=document.getElementById('hargaBarang').value.trim();
   const fInput=document.getElementById('fotoBarang');
   const k=document.getElementById('kategoriBarang').value;
-  const d=document.getElementById('diskonBarang').value.trim();
+  const wa=document.getElementById('waPenjual').value.trim();
+  const alamat=document.getElementById('alamatPenjual').value.trim();
 
-  if(!n||!h||!fInput.files.length){alert('Isi semua data dan pilih foto!'); return;}
+  if(!n||!h||!fInput.files.length||!wa||!alamat){alert('Isi semua data dan pilih foto!'); return;}
   const file=fInput.files[0];
 
-  // Maks 10MB
   if(file.size>10*1024*1024){alert('Ukuran gambar maksimal 10MB!'); return;}
+
+  let waFinal = wa.startsWith("0") ? "62"+wa.slice(1) : wa;
 
   const reader=new FileReader();
   reader.onload=function(e){
     const imgData=e.target.result;
-    barangList.push({nama:n,harga:Number(h),foto:imgData,kategori:k,diskon:Number(d)||0});
+    barangList.push({nama:n,harga:Number(h),foto:imgData,kategori:k,wa:waFinal,alamat:alamat});
     localStorage.setItem('barangList',JSON.stringify(barangList));
     updateKategoriOptions(); loadBarangAdmin(); renderShop(document.getElementById('searchInput').value);
   };
@@ -174,7 +173,8 @@ document.getElementById('tambahBarang').addEventListener('click',()=>{
   document.getElementById('namaBarang').value=''; 
   document.getElementById('hargaBarang').value=''; 
   document.getElementById('fotoBarang').value=''; 
-  document.getElementById('diskonBarang').value='';
+  document.getElementById('waPenjual').value=''; 
+  document.getElementById('alamatPenjual').value='';
 });
 
 function loadBarangAdmin(){
@@ -184,10 +184,11 @@ function loadBarangAdmin(){
     row.insertCell(0).innerText=i+1;
     row.insertCell(1).innerText=item.nama;
     row.insertCell(2).innerText='Rp'+item.harga;
-    row.insertCell(3).innerText=item.diskon+'%';
-    row.insertCell(4).innerText=item.kategori;
-    const fotoCell=row.insertCell(5); const img=document.createElement('img'); img.src=item.foto; img.style.width='50px'; img.style.height='50px'; fotoCell.appendChild(img);
-    const hapusCell=row.insertCell(6); const btn=document.createElement('button'); btn.innerText='Hapus';
+    row.insertCell(3).innerText=item.alamat;
+    row.insertCell(4).innerText=item.wa;
+    row.insertCell(5).innerText=item.kategori;
+    const fotoCell=row.insertCell(6); const img=document.createElement('img'); img.src=item.foto; img.style.width='50px'; img.style.height='50px'; fotoCell.appendChild(img);
+    const hapusCell=row.insertCell(7); const btn=document.createElement('button'); btn.innerText='Hapus';
     btn.addEventListener('click',()=>{barangList.splice(i,1);localStorage.setItem('barangList',JSON.stringify(barangList)); updateKategoriOptions(); loadBarangAdmin(); renderShop(document.getElementById('searchInput').value);});
     hapusCell.appendChild(btn);
   });
@@ -214,46 +215,15 @@ function renderShop(filter){
   if(sortVal==='desc') blist.sort((a,b)=>b.harga-a.harga);
   blist.forEach(item=>{
     const div=document.createElement('div'); div.className='card';
-    let hargaFinal=item.harga*(1-item.diskon/100);
-    div.innerHTML=`${item.diskon>0?'<div class="ribbon">'+item.diskon+'% OFF</div>':''}<img src="${item.foto}" alt="${item.nama}"><h3>${item.nama}</h3><p>Rp${hargaFinal}</p><button>Add to Cart</button>`;
-    div.querySelector('button').addEventListener('click',()=>{addToCart(item); showNotification(item.nama+' ditambahkan ke keranjang');});
+    div.innerHTML=`<img src="${item.foto}" alt="${item.nama}"><h3>${item.nama}</h3><p>Rp${item.harga}</p><p>${item.alamat}</p><button>Beli via WA</button>`;
+    div.querySelector('button').addEventListener('click',()=>{
+      let msg=`Halo, saya mau beli:\n${item.nama} - Rp${item.harga}`;
+      let waUrl=`https://wa.me/${item.wa}?text=${encodeURIComponent(msg)}`;
+      window.open(waUrl,'_blank');
+    });
     container.appendChild(div);
   });
 }
-
-// ===== Cart =====
-function addToCart(item){ 
-  if(!cart[item.nama]) cart[item.nama]={...item,qty:1}; else cart[item.nama].qty++; 
-  localStorage.setItem('cart',JSON.stringify(cart)); updateCartCount(); 
-}
-function updateCartCount(){ let count=Object.values(cart).reduce((acc,v)=>acc+v.qty,0); document.getElementById('cartCount').innerText=count; }
-document.getElementById('openCart').addEventListener('click',()=>{hideAll(); document.getElementById('cartBox').style.display='flex'; renderCart();});
-document.getElementById('closeCart').addEventListener('click',()=>{showShop(currentUser);});
-function renderCart(){ const div=document.getElementById('cartItems'); div.innerHTML=''; let total=0;
-  Object.values(cart).forEach(item=>{ let hargaFinal=item.harga*(1-item.diskon/100); const p=document.createElement('p'); p.innerHTML=`${item.nama} x ${item.qty} = Rp${hargaFinal*item.qty} <button>Hapus</button>`;
-  p.querySelector('button').addEventListener('click',()=>{delete cart[item.nama]; localStorage.setItem('cart',JSON.stringify(cart)); renderCart(); updateCartCount();});
-  div.appendChild(p); total+=hargaFinal*item.qty; }); document.getElementById('cartTotal').innerText=total;
-}
-
-// Checkout
-document.getElementById('checkoutBtn').addEventListener('click',()=>{
-  if(Object.keys(cart).length===0){alert('Keranjang kosong!'); return;}
-  if(confirm('Total Rp'+Object.values(cart).reduce((a,b)=>a.harga*(1-b.diskon/100)*b.qty,0)+'\nLanjut Checkout?')){cart={}; localStorage.setItem('cart',JSON.stringify(cart)); renderCart(); updateCartCount(); alert('Checkout berhasil!'); showShop(currentUser);}
-});
-
-// WhatsApp Checkout
-document.getElementById('waCheckoutBtn').addEventListener('click',()=>{
-  if(Object.keys(cart).length===0){alert('Keranjang kosong!'); return;}
-  let msg = "Halo, saya mau beli:\n";
-  Object.values(cart).forEach(item=>{
-    let hargaFinal=item.harga*(1-item.diskon/100);
-    msg += `${item.nama} x ${item.qty} = Rp${hargaFinal*item.qty}\n`;
-  });
-  let total = Object.values(cart).reduce((a,b)=>a+(b.harga*(1-b.diskon/100)*b.qty),0);
-  msg += `Total: Rp${total}`;
-  let waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-  window.open(waUrl,'_blank');
-});
 </script>
 </body>
 </html>
