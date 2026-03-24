@@ -57,7 +57,6 @@ button:hover{transform:scale(1.05);}
 <button id="logoutBtn" onclick="logout()">Logout</button>
 </header>
 
-<!-- Home -->
 <section id="home" class="active">
 <div class="hero">
 <canvas id="particles"></canvas>
@@ -68,14 +67,12 @@ button:hover{transform:scale(1.05);}
 <div class="products" id="previewProducts"></div>
 </section>
 
-<!-- Marketplace -->
 <section id="marketplace">
 <h2>Marketplace</h2>
 <p>Berisi semua produk dari berbagai penjual</p>
 <div class="products" id="allProducts"></div>
 </section>
 
-<!-- Register -->
 <section id="register">
 <div class="container">
 <h2>Register Penjual Baru</h2>
@@ -87,7 +84,6 @@ button:hover{transform:scale(1.05);}
 </div>
 </section>
 
-<!-- Login -->
 <section id="login">
 <div class="container">
 <h2>Login</h2>
@@ -98,7 +94,6 @@ button:hover{transform:scale(1.05);}
 </div>
 </section>
 
-<!-- Dashboard Penjual -->
 <section id="dashboard">
 <h2>Halo, <span id="userRole"></span></h2>
 <h3>Produk Anda</h3>
@@ -106,7 +101,6 @@ button:hover{transform:scale(1.05);}
 <button id="addProductBtn">Tambah Produk</button>
 </section>
 
-<!-- Dashboard Admin -->
 <section id="adminDashboard">
 <h2>Dashboard Admin</h2>
 <h3>Penjual Terdaftar</h3>
@@ -119,7 +113,6 @@ button:hover{transform:scale(1.05);}
 </table>
 </section>
 
-<!-- Modal Tambah Produk -->
 <div class="modal" id="productModal">
 <div class="modal-content">
 <button class="closeBtn" onclick="closeModal()">×</button>
@@ -185,13 +178,13 @@ setTimeout(()=>{div.classList.add('show');}, i*150);
 });
 }
 
-// ===== Hubungi WA =====
+// ===== Contact WA =====
 function contactSeller(phone){
 if(!phone) return alert('Penjual belum memasukkan nomor WA!');
 window.open(`https://wa.me/62${phone}`,'_blank');
 }
 
-// ===== Hapus Produk =====
+// ===== Delete Produk =====
 function deleteProduct(index){
 let products = getProducts();
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -225,30 +218,42 @@ else loginError.textContent='Username atau Password salah!';
 // ===== Logout =====
 function logout(){ localStorage.removeItem('loggedInUser'); showSection('home');}
 
-// ===== Modal Tambah Produk =====
+// ===== Modal =====
 const modal=document.getElementById('productModal');
 document.getElementById('addProductBtn').addEventListener('click',()=>{modal.style.display='flex';});
 function closeModal(){modal.style.display='none';}
 
-// ===== Simpan Produk =====
+// ===== Save Product =====
 document.getElementById('saveProductBtn').addEventListener('click',()=>{
 const name=document.getElementById('prodName').value.trim();
 const price=document.getElementById('prodPrice').value.trim();
 const imageFile=document.getElementById('prodImage').files[0];
 if(!name||!price||!imageFile) return alert('Isi semua data!');
+if(imageFile.size>500000) return alert('Ukuran gambar terlalu besar (max 500KB)');
 const reader=new FileReader();
 reader.onload=function(e){
-let products=getProducts();
-const owner=JSON.parse(localStorage.getItem('loggedInUser')).username;
-const phone=JSON.parse(localStorage.getItem('loggedInUser')).phone;
-products.push({name,price,image:e.target.result,owner,phone});
-saveProducts(products); renderProducts(); closeModal();
-document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';document.getElementById('prodImage').value='';
+  // Resize image to 220x220 px
+  const img = new Image();
+  img.src = e.target.result;
+  img.onload = function(){
+    const canvas=document.createElement('canvas');
+    canvas.width=220; canvas.height=220;
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0,220,220);
+    const resizedDataUrl = canvas.toDataURL('image/jpeg',0.8);
+
+    let products=getProducts();
+    const owner=JSON.parse(localStorage.getItem('loggedInUser')).username;
+    const phone=JSON.parse(localStorage.getItem('loggedInUser')).phone;
+    products.push({name,price,image:resizedDataUrl,owner,phone});
+    saveProducts(products); renderProducts(); closeModal();
+    document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';document.getElementById('prodImage').value='';
+  }
 };
 reader.readAsDataURL(imageFile);
 });
 
-// ===== Admin View =====
+// ===== Admin =====
 function showAdmin(){
 const users=getUsers();
 const products=getProducts();
@@ -280,7 +285,7 @@ const loggedUser=JSON.parse(localStorage.getItem('loggedInUser'));
 if(loggedUser) showSection(loggedUser.role==='Admin'?'adminDashboard':'dashboard');
 renderProducts();
 
-// ===== Particle Animation =====
+// ===== Particle =====
 const canvas=document.getElementById('particles');
 const ctx=canvas.getContext('2d');
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
