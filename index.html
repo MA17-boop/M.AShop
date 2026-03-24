@@ -3,99 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Super Visual</title>
+<title>M.AShop Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
 <style>
-body{
-  font-family:'Poppins',sans-serif;
-  margin:0; padding:0;
-  overflow-x:hidden;
-  background:linear-gradient(135deg,#f9a825,#0d47a1);
-  color:#333;
-  transition:0.5s;
-}
-
-/* Header */
-header{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:1rem 2rem; background:rgba(0,0,0,0.2); position:sticky; top:0; z-index:100;
-  backdrop-filter:blur(8px);
-}
-header h1{margin:0; color:white; font-size:1.8rem; text-shadow:0 2px 5px rgba(0,0,0,0.4);}
-nav{display:flex; gap:1rem;}
-nav button{
-  background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);
-  background-size:200% 200%; animation:btnGradient 3s ease infinite;
-  color:white; padding:0.5rem 1rem; border:none; border-radius:8px;
-  cursor:pointer; font-weight:600; transition:0.3s;
-  box-shadow:0 4px 10px rgba(0,0,0,0.3);
-}
-nav button:hover{transform:scale(1.05);}
-#logoutBtn{display:none; background:#e53935; color:white; padding:0.5rem 1rem; border:none; border-radius:8px; cursor:pointer; transition:0.3s;}
-#logoutBtn:hover{background:#d32f2f; transform:scale(1.05);}
-
-/* Sections */
-section{display:none; padding:2rem; opacity:0; transform:translateY(20px); transition:0.6s;}
-section.active{display:block; opacity:1; transform:translateY(0);}
-
-/* Hero */
-.hero{
-  position: relative;
-  text-align: center;
-  padding: 1rem 1rem; /* padding atas dikurangi */
-  color: white;
-  overflow: hidden;
-  min-height: 40vh; /* lebih kecil, biar teks naik */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* konten nempel ke atas */
-  align-items: center;
-}
-.hero h2{font-size:3rem; margin:0.5rem 0; animation:slideFade 1s ease forwards; text-shadow:0 3px 8px rgba(0,0,0,0.4);}
-.hero p{font-size:1.2rem; margin:0.5rem 0 1.5rem 0; animation:slideFade 1.5s ease forwards; text-shadow:0 2px 5px rgba(0,0,0,0.3);}
-.hero button{
-  padding:1rem 2rem; border:none; border-radius:12px; font-weight:600; cursor:pointer;
-  font-size:1.1rem; color:white;
-  box-shadow:0 4px 12px rgba(0,0,0,0.3);
-}
-
-/* Animations */
-@keyframes slideFade{0%{opacity:0; transform:translateY(50px);}100%{opacity:1; transform:translateY(0);}}
-@keyframes btnGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-@keyframes floatHover{0%{transform:translateY(0) rotateX(0deg);}50%{transform:translateY(-5px) rotateX(5deg);}100%{transform:translateY(0) rotateX(0deg);}}
-
-/* Forms */
-.container{max-width:400px; margin:2rem auto; background:white; padding:2rem; border-radius:15px; box-shadow:0 8px 30px rgba(0,0,0,0.3); animation:slideFade 0.8s ease forwards;}
-input,button{width:100%; padding:0.7rem; margin:0.5rem 0; border-radius:8px; border:1px solid #ccc;}
-button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800); background-size:200% 200%; animation:btnGradient 3s ease infinite; color:white; font-weight:600; border:none; cursor:pointer; transition:0.3s;}
-button:hover{transform:scale(1.05);}
-
-/* Products */
-.products{display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin-top:2rem;}
-.product{
-  background:white; padding:1rem; border-radius:15px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.3); width:220px;
-  text-align:center; position:relative; overflow:hidden;
-  transition:0.5s; transform-style: preserve-3d;
-}
-.product img{width:100%; border-radius:12px; transition:0.5s;}
-.product:hover{animation:floatHover 3s infinite; transform:scale(1.05) rotateX(5deg); box-shadow:0 15px 35px rgba(0,0,0,0.5);}
-.product h4{margin:0.5rem 0; color:#0d47a1;}
-.product p{margin:0.3rem 0; font-weight:600; color:#ff5722;}
-.product span{font-size:0.9rem; color:#555;}
-.product button{margin-top:0.3rem; font-size:0.9rem; cursor:pointer;}
-
-/* Modal */
-.modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center;}
-.modal-content{background:white; padding:2rem; border-radius:15px; width:90%; max-width:400px; position:relative; animation:slideFade 0.5s;}
-.closeBtn{position:absolute; top:10px; right:10px; background:#e53935; color:white; border:none; border-radius:50%; width:30px; height:30px; font-weight:bold; cursor:pointer;}
+body{font-family:'Poppins',sans-serif;margin:0;padding:0;background:linear-gradient(135deg,#f9a825,#0d47a1);color:#333;}
+header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:rgba(0,0,0,0.2);position:sticky;top:0;backdrop-filter:blur(8px);}
+header h1{color:white;font-size:1.8rem;}
+nav{display:flex;gap:1rem;}
+nav button, #logoutBtn{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;padding:0.5rem 1rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:0.3s;}
+nav button:hover, #logoutBtn:hover{transform:scale(1.05);}
+#logoutBtn{display:none;background:#e53935;}
+.hero{position:relative;text-align:center;padding:1rem;min-height:40vh;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;}
+.hero h2{font-size:3rem;margin:0.5rem 0;color:white;}
+.hero p{font-size:1.2rem;margin:0.5rem 0 1.5rem 0;color:white;}
+.container{max-width:400px;margin:2rem auto;background:white;padding:2rem;border-radius:15px;box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+input,button{width:100%;padding:0.7rem;margin:0.5rem 0;border-radius:8px;border:1px solid #ccc;}
+button{cursor:pointer;}
+.products{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:2rem;}
+.product{background:white;padding:1rem;border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,0.3);width:220px;text-align:center;position:relative;transition:0.5s;}
+.product img{width:100%;border-radius:12px;}
+.product h4{margin:0.5rem 0;color:#0d47a1;}
+.product p{margin:0.3rem 0;font-weight:600;color:#ff5722;}
+.product span{font-size:0.9rem;color:#555;}
+.product button{margin-top:0.3rem;font-size:0.9rem;}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+.modal-content{background:white;padding:2rem;border-radius:15px;width:90%;max-width:400px;position:relative;}
+.closeBtn{position:absolute;top:10px;right:10px;background:#e53935;color:white;border:none;border-radius:50%;width:30px;height:30px;font-weight:bold;cursor:pointer;}
 .closeBtn:hover{background:#d32f2f;}
+@keyframes btnGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 </style>
 </head>
 <body>
 
 <header>
-<h1>M.AShop</h1>
+<h1>M.AShop Pro</h1>
 <nav>
 <button onclick="showSection('home')">Home</button>
 <button onclick="showSection('login')">Login</button>
@@ -103,11 +51,11 @@ button:hover{transform:scale(1.05);}
 </nav>
 <button id="logoutBtn" onclick="logout()">Logout</button>
 </header>
+
 <section id="home" class="active">
 <div class="hero">
-<canvas id="particles"></canvas>
 <h2>Selamat Datang di M.AShop!</h2>
-<p>Belanja mudah & cepat. Silahkan daftar sebagai penjual untuk mulai menjual produkmu.</p>
+<p>Belanja mudah & cepat. Daftar sebagai penjual untuk mulai menjual produkmu.</p>
 <button onclick="showSection('register')">Daftar Sekarang</button>
 </div>
 <div class="products" id="previewProducts"></div>
@@ -152,16 +100,23 @@ button:hover{transform:scale(1.05);}
 </div>
 
 <script>
-// ===== LocalStorage Init =====
-if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([]));
-if(!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
-let currentUser = null;
-function getUsers(){ return JSON.parse(localStorage.getItem('users')); }
-function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
-function getProducts(){ return JSON.parse(localStorage.getItem('products')); }
-function saveProducts(products){ localStorage.setItem('products', JSON.stringify(products)); }
+// ===== Firebase Config =====
+const firebaseConfig = {
+  apiKey: "AIzaSyDYKENnqeW9vv9SK1-YHjs2IlWn5EkHYuc",
+  authDomain: "ma17pro.firebaseapp.com",
+  projectId: "ma17pro",
+  storageBucket: "ma17pro.firebasestorage.app",
+  messagingSenderId: "670069420924",
+  appId: "1:670069420924:web:9262b2f95ae3a671c7eaf9",
+  measurementId: "G-T1RSBX98VC"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const storage = firebase.storage();
 
-// ===== Navigation =====
+let currentUser = null;
+
+// ===== Functions =====
 const sections = document.querySelectorAll('section');
 const logoutBtn = document.getElementById('logoutBtn');
 function showSection(id){
@@ -171,96 +126,77 @@ logoutBtn.style.display=currentUser?'inline-block':'none';
 if(currentUser) document.getElementById('userRole').textContent=currentUser.username;
 renderProducts();
 }
+function closeModal(){document.getElementById('productModal').style.display='none';}
+function logout(){currentUser=null; showSection('home');}
 
 // ===== Register =====
 document.getElementById('registerBtn').addEventListener('click',()=>{
 const username=document.getElementById('regUsername').value.trim();
 const wa=document.getElementById('regWA').value.trim();
 const password=document.getElementById('regPassword').value.trim();
-const regError=document.getElementById('regError');
-if(!username||!wa||!password){ regError.textContent='Isi semua data!'; return;}
-let users=getUsers();
-if(users.find(u=>u.wa===wa)){ regError.textContent='Nomor WA sudah dipakai!'; return;}
-users.push({username,wa,password});
-saveUsers(users);
+if(!username||!wa||!password){document.getElementById('regError').textContent='Isi semua data!'; return;}
+db.ref('users').orderByChild('wa').equalTo(wa).once('value',snap=>{
+if(snap.exists()){document.getElementById('regError').textContent='Nomor WA sudah terdaftar!'; return;}
+db.ref('users').push({username,wa,password,role:'Penjual'});
 alert('Akun berhasil dibuat! Silahkan login.'); showSection('login');
+});
 });
 
 // ===== Login =====
 document.getElementById('loginBtn').addEventListener('click',()=>{
 const wa=document.getElementById('loginWA').value.trim();
 const password=document.getElementById('loginPassword').value.trim();
-let users=getUsers();
-const user=users.find(u=>u.wa===wa && u.password===password);
-if(user){ currentUser=user; showSection('dashboard'); } 
-else document.getElementById('loginError').textContent='Nomor WA atau Password salah!';
+db.ref('users').orderByChild('wa').equalTo(wa).once('value',snap=>{
+if(!snap.exists()){alert('WA tidak ditemukan!'); return;}
+let user = Object.values(snap.val())[0];
+if(user.password!==password){alert('Password salah!'); return;}
+currentUser = user;
+showSection('dashboard');
 });
 
-// ===== Logout =====
-function logout(){ currentUser=null; showSection('home');}
+// ===== Add Product =====
+document.getElementById('addProductBtn').addEventListener('click',()=>{document.getElementById('productModal').style.display='flex';});
 
-// ===== Modal =====
-const modal=document.getElementById('productModal');
-document.getElementById('addProductBtn').addEventListener('click',()=>{modal.style.display='flex';});
-function closeModal(){modal.style.display='none';}
-
-// ===== Simpan Produk =====
 document.getElementById('saveProductBtn').addEventListener('click',()=>{
 const name=document.getElementById('prodName').value.trim();
 const price=document.getElementById('prodPrice').value.trim();
-const imageFile=document.getElementById('prodImage').files[0];
-if(!name||!price||!imageFile){ return alert('Isi semua data!'); }
-if(imageFile.size > 100*1024*1024){ alert('Ukuran file max 100MB'); return;}
-const reader=new FileReader();
-reader.onload=function(e){
-let products=getProducts();
-products.push({name,price,image:e.target.result,username:currentUser.username,wa:currentUser.wa});
-saveProducts(products); renderProducts(); closeModal();
-document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';document.getElementById('prodImage').value='';
-};
-reader.readAsDataURL(imageFile);
+const file=document.getElementById('prodImage').files[0];
+if(!name||!price||!file){alert('Isi semua data!'); return;}
+if(file.size>100*1024*1024){alert('Max 100MB!'); return;}
+const storageRef = storage.ref('products/'+Date.now()+'_'+file.name);
+const uploadTask = storageRef.put(file);
+uploadTask.on('state_changed', null, err=>alert(err), ()=>{
+uploadTask.snapshot.ref.getDownloadURL().then(url=>{
+db.ref('products').push({name,price,image:url,username:currentUser.username,wa:currentUser.wa});
+renderProducts(); closeModal();
+document.getElementById('prodName').value='';
+document.getElementById('prodPrice').value='';
+document.getElementById('prodImage').value='';
+});
+});
 });
 
-// ===== Hapus Produk =====
-function deleteProduct(index){
-if(confirm('Yakin hapus produk ini?')){
-let products=getProducts();
-products.splice(index,1); saveProducts(products); renderProducts();
-}
-}
-
-// ===== Render Produk =====
+// ===== Render Products =====
 function renderProducts(){
 const preview=document.getElementById('previewProducts');
 const userP=document.getElementById('userProducts');
 preview.innerHTML=''; userP.innerHTML='';
-let products=getProducts();
-products.forEach((p,i)=>{
-const div=document.createElement('div'); div.className='product';
-div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.username}</span>
-<br><button onclick="window.open('https://wa.me/62${p.wa}','_blank')">Hubungi Penjual</button>`;
-if(currentUser && p.username===currentUser.username) div.innerHTML+=`<br><button onclick="deleteProduct(${i})">Hapus</button>`;
+db.ref('products').once('value',snap=>{
+if(!snap.exists()) return;
+Object.keys(snap.val()).forEach(key=>{
+const p = snap.val()[key];
+const div = document.createElement('div'); div.className='product';
+div.innerHTML = `<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.username}</span><br>
+<button onclick="window.open('https://wa.me/62${p.wa}','_blank')">Hubungi Penjual</button>`;
+if(currentUser && p.username===currentUser.username){div.innerHTML+=`<br><button onclick="deleteProduct('${key}')">Hapus</button>`;}
 preview.appendChild(div);
 if(currentUser && p.username===currentUser.username) userP.appendChild(div.cloneNode(true));
 });
+});
 }
 
-// ===== Particle Animation =====
-const canvas=document.getElementById('particles');
-const ctx=canvas.getContext('2d');
-canvas.width=window.innerWidth; canvas.height=window.innerHeight;
-let particles=[];
-for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,speed:Math.random()*0.5+0.2});}
-function animateParticles(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-particles.forEach(p=>{
-ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.fill();
-p.y-=p.speed; if(p.y<0)p.y=canvas.height; if(p.x>canvas.width)p.x=0;
-});
-requestAnimationFrame(animateParticles);
-}
-animateParticles();
-window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+// ===== Delete Product =====
+function deleteProduct(key){if(confirm('Yakin hapus produk ini?')){db.ref('products/'+key).remove(); renderProducts();}}
 
 showSection('home');
 </script>
