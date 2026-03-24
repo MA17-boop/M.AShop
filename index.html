@@ -39,7 +39,17 @@ section{display:none; padding:2rem; opacity:0; transform:translateY(20px); trans
 section.active{display:block; opacity:1; transform:translateY(0);}
 
 /* Hero */
-.hero{position:relative; text-align:center; padding:6rem 1rem; color:white; overflow:hidden;}
+.hero{
+  position: relative;
+  text-align: center;
+  padding: 2rem 1rem; /* padding dikurangi biar teks lebih naik */
+  color: white;
+  overflow: hidden;
+  min-height: 60vh; /* tinggi hero tetap besar tapi teks lebih atas */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* biar teks selalu di tengah vertikal */
+}
 .hero h2{font-size:3rem; margin-bottom:1rem; animation:slideFade 1s ease forwards; text-shadow:0 3px 8px rgba(0,0,0,0.4);}
 .hero p{font-size:1.2rem; margin-bottom:2rem; animation:slideFade 1.5s ease forwards; text-shadow:0 2px 5px rgba(0,0,0,0.3);}
 .hero button{
