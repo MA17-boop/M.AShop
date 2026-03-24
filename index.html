@@ -23,12 +23,6 @@ section.active{display:block;opacity:1;transform:translateY(0);}
 #particles{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;}
 @keyframes slideFade{0%{opacity:0;transform:translateY(50px);}100%{opacity:1;transform:translateY(0);}}
 @keyframes btnGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-@keyframes floatHover{0%{transform:translateY(0) rotateX(0deg);}50%{transform:translateY(-5px) rotateX(5deg);}100%{transform:translateY(0) rotateX(0deg);}}
-@keyframes productAppear{0%{opacity:0;transform:translateY(30px);}100%{opacity:1;transform:translateY(0);}}
-.container{max-width:400px;margin:2rem auto;background:white;padding:2rem;border-radius:15px;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:slideFade 0.8s ease forwards;}
-input,button{width:100%;padding:0.7rem;margin:0.5rem 0;border-radius:8px;border:1px solid #ccc;}
-button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;font-weight:600;border:none;cursor:pointer;transition:0.3s;}
-button:hover{transform:scale(1.05);}
 .products{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:2rem;}
 .product{background:white;padding:1rem;border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,0.3);width:220px;text-align:center;position:relative;overflow:hidden;opacity:0;transform:translateY(30px);animation:productAppear 0.5s forwards;transition:0.5s;transform-style: preserve-3d;}
 .product img{width:100%;height:100px;object-fit:cover;border-radius:12px;transition:0.5s;}
@@ -36,14 +30,18 @@ button:hover{transform:scale(1.05);}
 .product h4{margin:0.5rem 0;color:#0d47a1;}
 .product p{margin:0.3rem 0;font-weight:600;color:#ff5722;}
 .product span{font-size:0.9rem;color:#555;}
-.product button{margin-top:5px;background:#25D366;width:100%;padding:0.5rem;border:none;border-radius:8px;color:white;cursor:pointer;}
+.product button{margin-top:5px;background:#25D366;width:100%;padding:0.5rem;border:none;border-radius:8px;cursor:pointer;}
+.product .deleteBtn{margin-top:5px;background:#e53935;color:white;border:none;padding:0.5rem;width:100%;border-radius:8px;cursor:pointer;}
+.container{max-width:400px;margin:2rem auto;background:white;padding:2rem;border-radius:15px;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:slideFade 0.8s ease forwards;}
+input,button{width:100%;padding:0.7rem;margin:0.5rem 0;border-radius:8px;border:1px solid #ccc;}
+button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;font-weight:600;border:none;cursor:pointer;transition:0.3s;}
+button:hover{transform:scale(1.05);}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
 .modal-content{background:white;padding:2rem;border-radius:15px;width:90%;max-width:400px;position:relative;animation:slideFade 0.5s;}
 .closeBtn{position:absolute;top:10px;right:10px;background:#e53935;color:white;border:none;border-radius:50%;width:30px;height:30px;font-weight:bold;cursor:pointer;}
 .closeBtn:hover{background:#d32f2f;}
-table{width:100%;border-collapse:collapse;margin-top:1rem;}
-th,td{border:1px solid #ccc;padding:0.5rem;text-align:center;}
-th{background:#0d47a1;color:white;}
+@keyframes floatHover{0%{transform:translateY(0) rotateX(0deg);}50%{transform:translateY(-5px) rotateX(5deg);}100%{transform:translateY(0) rotateX(0deg);}}
+@keyframes productAppear{0%{opacity:0;transform:translateY(30px);}100%{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
@@ -117,7 +115,7 @@ th{background:#0d47a1;color:white;}
 </table>
 <h3>Semua Produk</h3>
 <table id="adminProductsTable">
-<tr><th>Produk</th><th>Harga</th><th>Penjual</th></tr>
+<tr><th>Produk</th><th>Harga</th><th>Penjual</th><th>Aksi</th></tr>
 </table>
 </section>
 
@@ -128,13 +126,14 @@ th{background:#0d47a1;color:white;}
 <h3>Tambah Produk</h3>
 <input type="text" id="prodName" placeholder="Nama Produk">
 <input type="number" id="prodPrice" placeholder="Harga Produk">
+<input type="file" id="prodImage" accept="image/*">
 <button id="saveProductBtn">Simpan Produk</button>
 </div>
 </div>
 
 <script>
 // ===== LocalStorage Init =====
-if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([{username:'admin',password:'admin123',role:'Admin'}]));
+if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([{username:'admin',password:'MAlfian17xx',role:'Admin',phone:''}]));
 if(!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
 function getUsers(){ return JSON.parse(localStorage.getItem('users')); }
 function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
@@ -148,7 +147,7 @@ function showSection(id){
 sections.forEach(sec=>sec.classList.remove('active'));
 document.getElementById(id).classList.add('active');
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
-if(user){ logoutBtn.style.display='inline-block';
+if(user){ logoutBtn.style.display='inline-block'; 
 if(user.role==='Admin') showAdmin(); 
 else if(id==='login'||id==='register') showSection('dashboard'); 
 } else logoutBtn.style.display='none';
@@ -159,63 +158,57 @@ renderProducts();
 function renderProducts(){
 const preview = document.getElementById('previewProducts');
 const userP = document.getElementById('userProducts');
-const allP = document.getElementById('allProducts'); 
-preview.innerHTML=''; userP.innerHTML=''; allP.innerHTML='';
-
+const allP = document.getElementById('allProducts');
+preview.innerHTML=''; userP.innerHTML=''; if(allP) allP.innerHTML='';
 const products = getProducts();
-
-// Preview Home (4 produk terakhir)
-products.slice(-4).forEach((p,i)=>{
+products.forEach((p,i)=>{
 const div = document.createElement('div'); div.className='product';
 div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.owner}</span>
-<button onclick="window.open('https://wa.me/${p.phone}','_blank')">Hubungi Penjual</button>`;
+<button onclick="contactSeller('${p.phone}')">Hubungi Penjual</button>
+<button class="deleteBtn" onclick="deleteProduct(${i})">Hapus</button>`;
 preview.appendChild(div);
+if(allP) allP.appendChild(div.cloneNode(true));
 setTimeout(()=>{div.classList.add('show');}, i*150);
 });
-
-// Dashboard Penjual
 const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-if(loggedUser){
+if(!loggedUser) return;
 document.getElementById('userRole').textContent = loggedUser.username;
 products.forEach((p,i)=>{
 if(p.owner===loggedUser.username){
 const div = document.createElement('div'); div.className='product';
 div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.owner}</span>
-<button onclick="window.open('https://wa.me/${p.phone}','_blank')">Hubungi Penjual</button>`;
+<button onclick="contactSeller('${p.phone}')">Hubungi Penjual</button>
+<button class="deleteBtn" onclick="deleteProduct(${i})">Hapus</button>`;
 userP.appendChild(div);
 setTimeout(()=>{div.classList.add('show');}, i*150);
 }
 });
 }
 
-// Marketplace Semua Produk
-products.forEach((p,i)=>{
-const div = document.createElement('div'); div.className='product';
-div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.owner}</span>
-<button onclick="window.open('https://wa.me/${p.phone}','_blank')">Hubungi Penjual</button>`;
-allP.appendChild(div);
-setTimeout(()=>{div.classList.add('show');}, i*100);
-});
+// ===== Hubungi WA =====
+function contactSeller(phone){
+if(!phone) return alert('Penjual belum memasukkan nomor WA!');
+window.open(`https://wa.me/62${phone}`,'_blank');
+}
+
+// ===== Hapus Produk =====
+function deleteProduct(index){
+let products = getProducts();
+const user = JSON.parse(localStorage.getItem('loggedInUser'));
+if(products[index].owner!==user.username && user.role!=='Admin'){ alert('Hanya penjual atau admin bisa menghapus produk ini!'); return;}
+products.splice(index,1); saveProducts(products); renderProducts();
 }
 
 // ===== Register =====
 document.getElementById('registerBtn').addEventListener('click',()=>{
-let username=document.getElementById('regUsername').value.trim();
-let password=document.getElementById('regPassword').value.trim();
-let phone=document.getElementById('regPhone').value.trim();
-let regError=document.getElementById('regError');
+const username=document.getElementById('regUsername').value.trim();
+const password=document.getElementById('regPassword').value.trim();
+const phone=document.getElementById('regPhone').value.trim();
+const regError=document.getElementById('regError');
 let users=getUsers();
 if(!username||!password||!phone){ regError.textContent='Isi semua data!'; return;}
 if(users.find(u=>u.username===username)){ regError.textContent='Username sudah dipakai!'; return;}
-
-// Tambahkan kode 62 otomatis
-if(!phone.startsWith('62')){
-    if(phone.startsWith('0')) phone='62'+phone.slice(1);
-    else phone='62'+phone;
-}
-
-users.push({username,password,phone,role:'Penjual'});
-saveUsers(users);
+users.push({username,password,role:'Penjual',phone}); saveUsers(users);
 alert('Akun berhasil dibuat! Silahkan login.'); showSection('login');
 });
 
@@ -232,7 +225,7 @@ else loginError.textContent='Username atau Password salah!';
 // ===== Logout =====
 function logout(){ localStorage.removeItem('loggedInUser'); showSection('home');}
 
-// ===== Modal =====
+// ===== Modal Tambah Produk =====
 const modal=document.getElementById('productModal');
 document.getElementById('addProductBtn').addEventListener('click',()=>{modal.style.display='flex';});
 function closeModal(){modal.style.display='none';}
@@ -241,18 +234,18 @@ function closeModal(){modal.style.display='none';}
 document.getElementById('saveProductBtn').addEventListener('click',()=>{
 const name=document.getElementById('prodName').value.trim();
 const price=document.getElementById('prodPrice').value.trim();
-const loggedUser=JSON.parse(localStorage.getItem('loggedInUser'));
-if(!name||!price){ alert('Isi semua data!'); return;}
+const imageFile=document.getElementById('prodImage').files[0];
+if(!name||!price||!imageFile) return alert('Isi semua data!');
+const reader=new FileReader();
+reader.onload=function(e){
 let products=getProducts();
-products.push({
-  name,
-  price,
-  image:'https://via.placeholder.com/220x100?text=Produk',
-  owner:loggedUser.username,
-  phone:loggedUser.phone
-});
+const owner=JSON.parse(localStorage.getItem('loggedInUser')).username;
+const phone=JSON.parse(localStorage.getItem('loggedInUser')).phone;
+products.push({name,price,image:e.target.result,owner,phone});
 saveProducts(products); renderProducts(); closeModal();
-document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';
+document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';document.getElementById('prodImage').value='';
+};
+reader.readAsDataURL(imageFile);
 });
 
 // ===== Admin View =====
@@ -271,12 +264,14 @@ row.insertCell(2).textContent=total.toLocaleString();
 }
 });
 const prodTable=document.getElementById('adminProductsTable');
-prodTable.innerHTML='<tr><th>Produk</th><th>Harga</th><th>Penjual</th></tr>';
-products.forEach(p=>{
+prodTable.innerHTML='<tr><th>Produk</th><th>Harga</th><th>Penjual</th><th>Aksi</th></tr>';
+products.forEach((p,i)=>{
 let row=prodTable.insertRow();
 row.insertCell(0).textContent=p.name;
 row.insertCell(1).textContent=Number(p.price).toLocaleString();
 row.insertCell(2).textContent=p.owner;
+let btn=row.insertCell(3);
+btn.innerHTML=`<button onclick="deleteProduct(${i})">Hapus</button>`;
 });
 }
 
@@ -291,7 +286,14 @@ const ctx=canvas.getContext('2d');
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 let particles=[];
 for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,speed:Math.random()*0.5+0.2});}
-function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.6)';ctx.fill();p.y-=p.speed;if(p.y<0)p.y=canvas.height;if(p.x>canvas.width)p.x=0;});requestAnimationFrame(animateParticles);}
+function animateParticles(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+particles.forEach(p=>{
+ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.fill();
+p.y-=p.speed; if(p.y<0)p.y=canvas.height; if(p.x>canvas.width)p.x=0;
+});
+requestAnimationFrame(animateParticles);
+}
 animateParticles();
 window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 </script>
