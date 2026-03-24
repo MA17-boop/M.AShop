@@ -13,11 +13,12 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
 <style>
+/* Tampilan keren + animasi tombol */
 body{font-family:'Poppins',sans-serif;margin:0;padding:0;background:linear-gradient(135deg,#f9a825,#0d47a1);color:#333;}
 header{position:fixed;top:0;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0.8rem;background:rgba(0,0,0,0.3);backdrop-filter:blur(6px);z-index:100;}
 header h1{color:white;font-size:1.5rem;}
 nav{display:flex;gap:0.5rem;}
-nav button,#logoutBtn{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;padding:0.4rem 0.8rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;pointer-events:auto;}
+nav button,#logoutBtn{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;padding:0.4rem 0.8rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;}
 nav button:hover,#logoutBtn:hover{transform:scale(1.05);}
 #logoutBtn{display:none;background:#e53935;}
 section{padding-top:70px;position:relative;}
@@ -27,7 +28,7 @@ section{padding-top:70px;position:relative;}
 .hero button{margin-top:0.5rem;}
 .container{max-width:360px;margin:1rem auto;background:white;padding:1rem;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.25);}
 input,button{width:100%;padding:0.6rem;margin:0.4rem 0;border-radius:8px;border:1px solid #ccc;}
-button{cursor:pointer;pointer-events:auto;}
+button{cursor:pointer;}
 .products{display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-top:1rem;}
 .product{background:white;padding:0.6rem;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.25);width:150px;text-align:center;position:relative;transition:0.3s;}
 .product img{width:100%;border-radius:8px;}
