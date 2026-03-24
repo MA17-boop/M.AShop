@@ -1,54 +1,90 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Pro HP-Ready</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<title>M.AShop Modern Final</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* Tampilan keren + animasi tombol */
-body{font-family:'Poppins',sans-serif;margin:0;padding:0;background:linear-gradient(135deg,#f9a825,#0d47a1);color:#333;}
+/* ===== Body & Background ===== */
+body{margin:0;padding:0;font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#f9a825,#0d47a1);color:#333;}
+
+/* ===== Header ===== */
 header{position:fixed;top:0;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0.8rem;background:rgba(0,0,0,0.3);backdrop-filter:blur(6px);z-index:100;}
 header h1{color:white;font-size:1.5rem;}
-nav{display:flex;gap:0.5rem;}
+nav{display:flex; gap:0.5rem;}
 nav button,#logoutBtn{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;padding:0.4rem 0.8rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;}
 nav button:hover,#logoutBtn:hover{transform:scale(1.05);}
 #logoutBtn{display:none;background:#e53935;}
+
+/* ===== Sections ===== */
 section{padding-top:70px;position:relative;}
+section:not(.active){display:none;}
+
+/* ===== Hero Home ===== */
 .hero{padding:1rem;text-align:center;}
 .hero h2{color:white;font-size:2rem;margin:0.5rem 0;}
 .hero p{color:white;font-size:1rem;margin:0.3rem 0;}
-.hero button{margin-top:0.5rem;}
+.hero button{margin-top:0.5rem;padding:0.5rem 1rem;border:none;border-radius:8px;background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);color:white;cursor:pointer;transition:0.3s;}
+.hero button:hover{transform:scale(1.05);}
+
+/* ===== Container ===== */
 .container{max-width:360px;margin:1rem auto;background:white;padding:1rem;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.25);}
+
+/* ===== Inputs ===== */
 input,button{width:100%;padding:0.6rem;margin:0.4rem 0;border-radius:8px;border:1px solid #ccc;}
 button{cursor:pointer;}
+
+/* ===== Login Modern ===== */
+.loginBx h2{text-align:center;margin-bottom:20px;color:#0d47a1;font-size:1.8rem;position:relative;}
+.loginBx h2 i.fa-heart{color:#ff5252;margin-left:10px;}
+.loginBx input[type="text"], .loginBx input[type="password"]{
+  width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #ccc;outline:none;transition:0.3s;
+}
+.loginBx input[type="text"]:focus, .loginBx input[type="password"]:focus{
+  border-color:#0d47a1;box-shadow:0 0 8px rgba(13,71,161,0.3);
+}
+.loginBx input[type="submit"]{
+  margin-top:15px;background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);
+  background-size:200% 200%;animation:gradientBtn 3s ease infinite;
+  border:none;padding:12px;border-radius:8px;color:white;font-weight:600;cursor:pointer;transition:0.3s;
+}
+.loginBx input[type="submit"]:hover{transform:scale(1.05);}
+.group{display:flex;justify-content:space-between;margin-top:15px;}
+.group a{color:#0d47a1;text-decoration:none;font-size:0.85rem;transition:0.3s;}
+.group a:hover{color:#ff5252;text-decoration:underline;}
+
+/* ===== Products ===== */
 .products{display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-top:1rem;}
-.product{background:white;padding:0.6rem;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.25);width:150px;text-align:center;position:relative;transition:0.3s;}
+.product{background:white;padding:0.6rem;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.25);width:150px;text-align:center;position:relative;transition: transform 0.3s, box-shadow 0.3s, opacity 0.5s; opacity:0; transform: translateY(20px);}
+.product.show{opacity:1;transform:translateY(0);}
+.product:hover{transform:scale(1.05);box-shadow:0 8px 25px rgba(0,0,0,0.35);}
 .product img{width:100%;border-radius:8px;}
 .product h4{margin:0.2rem 0;color:#0d47a1;font-size:0.9rem;}
 .product p{margin:0.2rem 0;font-weight:600;color:#ff5722;font-size:0.85rem;}
 .product span{font-size:0.75rem;color:#555;}
 .product button{margin-top:0.3rem;font-size:0.75rem;padding:0.3rem;}
+
+/* ===== Modal ===== */
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:200;}
-.modal-content{background:white;padding:1.2rem;border-radius:12px;width:90%;max-width:350px;position:relative;}
+.modal-content{background:white;padding:1.2rem;border-radius:12px;width:90%;max-width:350px;position:relative;transform:translateY(-50px);opacity:0;transition: transform 0.3s, opacity 0.3s;}
+.modal.show .modal-content{transform:translateY(0);opacity:1;}
 .closeBtn{position:absolute;top:8px;right:8px;background:#e53935;color:white;border:none;border-radius:50%;width:28px;height:28px;font-weight:bold;cursor:pointer;}
 .closeBtn:hover{background:#d32f2f;}
+
+/* ===== Animations ===== */
 @keyframes btnGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-.active{display:block;}
-section:not(.active){display:none;}
+@keyframes gradientBtn{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes fadeIn{0%{opacity:0;}100%{opacity:1;}}
+@keyframes slideUp{0%{opacity:0; transform: translateY(50px);}100%{opacity:1; transform: translateY(0);}}
 </style>
 </head>
+
 <body>
 
 <header>
-<h1>M.AShop Pro</h1>
+<h1>M.AShop Modern</h1>
 <nav>
 <button onclick="showSection('home')">Home</button>
 <button onclick="showSection('login')">Login</button>
@@ -57,6 +93,7 @@ section:not(.active){display:none;}
 <button id="logoutBtn" onclick="logout()">Logout</button>
 </header>
 
+<!-- ===== Home ===== -->
 <section id="home" class="active">
 <div class="hero">
 <h2>Selamat Datang di M.AShop!</h2>
@@ -66,33 +103,39 @@ section:not(.active){display:none;}
 <div class="products" id="previewProducts"></div>
 </section>
 
-<section id="register">
-<div class="container">
+<!-- ===== Register ===== -->
+<section id="register" class="container">
 <h2>Register Penjual</h2>
 <input type="text" id="regUsername" placeholder="Username">
 <input type="text" id="regWA" placeholder="Nomor WA (contoh 81234567890)">
 <input type="password" id="regPassword" placeholder="Password">
 <button id="registerBtn">Daftar</button>
 <p id="regError" style="color:red;font-size:0.8rem;"></p>
-</div>
 </section>
 
-<section id="login">
-<div class="container">
-<h2>Login</h2>
-<input type="text" id="loginWA" placeholder="Nomor WA">
+<!-- ===== Login ===== -->
+<section id="login" class="container">
+<div class="loginBx">
+<h2><i class="fa-solid fa-right-to-bracket"></i> Login <i class="fa-solid fa-heart"></i></h2>
+<input type="text" id="loginUsername" placeholder="Username / WA">
 <input type="password" id="loginPassword" placeholder="Password">
-<button id="loginBtn">Login</button>
-<p id="loginError" style="color:red;font-size:0.8rem;"></p>
+<input type="submit" value="Sign in" id="loginBtn">
+<div class="group">
+<a href="#">Forgot Password</a>
+<a href="#">Sign up</a>
 </div>
+</div>
+<p id="loginError" style="color:red;font-size:0.8rem;"></p>
 </section>
 
+<!-- ===== Dashboard ===== -->
 <section id="dashboard">
 <h2>Halo, <span id="userRole"></span></h2>
 <button id="addProductBtn">Tambah Produk</button>
 <div class="products" id="userProducts"></div>
 </section>
 
+<!-- ===== Modal Tambah Produk ===== -->
 <div class="modal" id="productModal">
 <div class="modal-content">
 <button class="closeBtn" onclick="closeModal()">×</button>
@@ -105,25 +148,13 @@ section:not(.active){display:none;}
 </div>
 
 <script>
-// ===== Firebase Config =====
-const firebaseConfig = {
-  apiKey: "AIzaSyAFlX2ncZ6WdnUuEp6RviJ-__Nzk3Cst2M",
-  authDomain: "ma17shoppro.firebaseapp.com",
-  projectId: "ma17shoppro",
-  storageBucket: "ma17shoppro.firebasestorage.app",
-  messagingSenderId: "819647868093",
-  appId: "1:819647868093:web:cd591f512cbbd435a29bd4",
-  measurementId: "G-CQ6H6NCF4T"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const storage = firebase.storage();
-
+let users = JSON.parse(localStorage.getItem('users')||'[]');
+let products = JSON.parse(localStorage.getItem('products')||'[]');
 let currentUser = null;
 
-// ===== Functions =====
 const sections = document.querySelectorAll('section');
 const logoutBtn = document.getElementById('logoutBtn');
+
 function showSection(id){
 sections.forEach(sec=>sec.classList.remove('active'));
 document.getElementById(id).classList.add('active');
@@ -131,80 +162,86 @@ logoutBtn.style.display=currentUser?'inline-block':'none';
 if(currentUser) document.getElementById('userRole').textContent=currentUser.username;
 renderProducts();
 }
-function closeModal(){document.getElementById('productModal').style.display='none';}
+
+function closeModal(){ 
+  const modal=document.getElementById('productModal'); 
+  modal.classList.remove('show'); 
+  setTimeout(()=>{modal.style.display='none';},300);
+}
+
 function logout(){currentUser=null; showSection('home');}
 
-// ===== Register =====
+// Register
 document.getElementById('registerBtn').addEventListener('click',()=>{
 const username=document.getElementById('regUsername').value.trim();
 const wa=document.getElementById('regWA').value.trim();
 const password=document.getElementById('regPassword').value.trim();
 if(!username||!wa||!password){document.getElementById('regError').textContent='Isi semua data!'; return;}
-db.ref('users').orderByChild('wa').equalTo(wa).once('value',snap=>{
-if(snap.exists()){document.getElementById('regError').textContent='Nomor WA sudah terdaftar!'; return;}
-db.ref('users').push({username,wa,password,role:'Penjual'});
+if(users.find(u=>u.wa===wa)){document.getElementById('regError').textContent='Nomor WA sudah terdaftar!'; return;}
+users.push({username,wa,password,role:'Penjual'});
+localStorage.setItem('users',JSON.stringify(users));
 alert('Akun berhasil dibuat! Silahkan login.'); showSection('login');
 });
-});
 
-// ===== Login =====
+// Login
 document.getElementById('loginBtn').addEventListener('click',()=>{
-const wa=document.getElementById('loginWA').value.trim();
+const username=document.getElementById('loginUsername').value.trim();
 const password=document.getElementById('loginPassword').value.trim();
-db.ref('users').orderByChild('wa').equalTo(wa).once('value',snap=>{
-if(!snap.exists()){alert('WA tidak ditemukan!'); return;}
-let user = Object.values(snap.val())[0];
+let user = users.find(u=>u.username===username||u.wa===username);
+if(!user){alert('Username/WA tidak ditemukan!'); return;}
 if(user.password!==password){alert('Password salah!'); return;}
-currentUser = user;
+currentUser=user;
 showSection('dashboard');
 });
 
-// ===== Add Product =====
-document.getElementById('addProductBtn').addEventListener('click',()=>{document.getElementById('productModal').style.display='flex';});
+// Add Product
+document.getElementById('addProductBtn').addEventListener('click',()=>{
+  const modal=document.getElementById('productModal');
+  modal.style.display='flex';
+  setTimeout(()=>{modal.classList.add('show')},10);
+});
 
 document.getElementById('saveProductBtn').addEventListener('click',()=>{
 const name=document.getElementById('prodName').value.trim();
 const price=document.getElementById('prodPrice').value.trim();
 const file=document.getElementById('prodImage').files[0];
 if(!name||!price||!file){alert('Isi semua data!'); return;}
-if(file.size>100*1024*1024){alert('Max 100MB!'); return;}
-const storageRef = storage.ref('products/'+Date.now()+'_'+file.name);
-const uploadTask = storageRef.put(file);
-uploadTask.on('state_changed', null, err=>alert(err), ()=>{
-uploadTask.snapshot.ref.getDownloadURL().then(url=>{
-db.ref('products').push({name,price,image:url,username:currentUser.username,wa:currentUser.wa});
+if(file.size>5*1024*1024){alert('Maks 5MB!'); return;}
+const reader = new FileReader();
+reader.onload=function(e){
+products.push({name,price,image:e.target.result,username:currentUser.username,wa:currentUser.wa});
+localStorage.setItem('products',JSON.stringify(products));
 renderProducts(); closeModal();
 document.getElementById('prodName').value='';
 document.getElementById('prodPrice').value='';
 document.getElementById('prodImage').value='';
-});
-});
+}
+reader.readAsDataURL(file);
 });
 
-// ===== Render Products =====
+// Render Products
 function renderProducts(){
 const preview=document.getElementById('previewProducts');
 const userP=document.getElementById('userProducts');
 preview.innerHTML=''; userP.innerHTML='';
-db.ref('products').once('value',snap=>{
-if(!snap.exists()) return;
-Object.keys(snap.val()).forEach(key=>{
-const p = snap.val()[key];
+
+products.forEach((p,i)=>{
 const div = document.createElement('div'); div.className='product';
 div.innerHTML = `<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.username}</span><br>
 <button onclick="window.open('https://wa.me/62${p.wa}','_blank')">Hubungi Penjual</button>`;
-if(currentUser && p.username===currentUser.username){div.innerHTML+=`<br><button onclick="deleteProduct('${key}')">Hapus</button>`;}
+if(currentUser && p.username===currentUser.username){div.innerHTML+=`<br><button onclick="deleteProduct(${i})">Hapus</button>`;}
 preview.appendChild(div);
 if(currentUser && p.username===currentUser.username) userP.appendChild(div.cloneNode(true));
-});
+
+// Animasi slide in
+setTimeout(()=>{div.classList.add('show')}, i*100);
 });
 }
 
-// ===== Delete Product =====
-function deleteProduct(key){if(confirm('Yakin hapus produk ini?')){db.ref('products/'+key).remove(); renderProducts();}}
+// Delete Product
+function deleteProduct(index){if(confirm('Yakin hapus produk ini?')){products.splice(index,1); localStorage.setItem('products',JSON.stringify(products)); renderProducts();}}
 
 showSection('home');
 </script>
-
 </body>
 </html>
