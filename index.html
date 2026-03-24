@@ -6,83 +6,44 @@
 <title>M.AShop Super Visual</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{
-  font-family:'Poppins',sans-serif;
-  margin:0; padding:0;
-  overflow-x:hidden;
-  background:linear-gradient(135deg,#f9a825,#0d47a1);
-  color:#333;
-  transition:0.5s;
-}
-/* Header */
-header{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:1rem 2rem; background:rgba(0,0,0,0.2); position:sticky; top:0; z-index:100;
-  backdrop-filter:blur(8px);
-}
-header h1{margin:0; color:white; font-size:1.8rem;}
-nav{display:flex; gap:1rem;}
-nav button{
-  background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);
-  background-size:200% 200%; animation:btnGradient 3s ease infinite;
-  color:white; padding:0.5rem 1rem; border:none; border-radius:8px;
-  cursor:pointer; font-weight:600; transition:0.3s;
-}
+body{font-family:'Poppins',sans-serif;margin:0;padding:0;overflow-x:hidden;background:linear-gradient(135deg,#f9a825,#0d47a1);color:#333;transition:0.5s;}
+header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:rgba(0,0,0,0.2);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+header h1{margin:0;color:white;font-size:1.8rem;}
+nav{display:flex;gap:1rem;}
+nav button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;padding:0.5rem 1rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:0.3s;}
 nav button:hover{transform:scale(1.05);}
-#logoutBtn{display:none; background:#e53935; color:white; padding:0.5rem 1rem; border:none; border-radius:8px; cursor:pointer; transition:0.3s;}
-#logoutBtn:hover{background:#d32f2f; transform:scale(1.05);}
-
-/* Sections */
-section{display:none; padding:2rem; opacity:0; transform:translateY(20px); transition:0.6s;}
-section.active{display:block; opacity:1; transform:translateY(0);}
-
-/* Hero */
-.hero{position:relative; text-align:center; padding:6rem 1rem; color:white; overflow:hidden;}
-.hero h2{font-size:3rem; margin-bottom:1rem; animation:slideFade 1s ease forwards;}
-.hero p{font-size:1.2rem; margin-bottom:2rem; animation:slideFade 1.5s ease forwards;}
-.hero button{
-  padding:1rem 2rem; border:none; border-radius:12px; font-weight:600; cursor:pointer;
-  font-size:1.1rem; color:white;
-}
-#particles{position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1;}
-
-/* Animations */
-@keyframes slideFade{0%{opacity:0; transform:translateY(50px);}100%{opacity:1; transform:translateY(0);}}
+#logoutBtn{display:none;background:#e53935;color:white;padding:0.5rem 1rem;border:none;border-radius:8px;cursor:pointer;transition:0.3s;}
+#logoutBtn:hover{background:#d32f2f;transform:scale(1.05);}
+section{display:none;padding:2rem;opacity:0;transform:translateY(20px);transition:0.6s;}
+section.active{display:block;opacity:1;transform:translateY(0);}
+.hero{position:relative;text-align:center;padding:6rem 1rem;color:white;overflow:hidden;}
+.hero h2{font-size:3rem;margin-bottom:1rem;animation:slideFade 1s ease forwards;}
+.hero p{font-size:1.2rem;margin-bottom:2rem;animation:slideFade 1.5s ease forwards;}
+.hero button{padding:1rem 2rem;border:none;border-radius:12px;font-weight:600;cursor:pointer;font-size:1.1rem;color:white;}
+#particles{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;}
+@keyframes slideFade{0%{opacity:0;transform:translateY(50px);}100%{opacity:1;transform:translateY(0);}}
 @keyframes btnGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 @keyframes floatHover{0%{transform:translateY(0) rotateX(0deg);}50%{transform:translateY(-5px) rotateX(5deg);}100%{transform:translateY(0) rotateX(0deg);}}
-@keyframes productAppear{0%{opacity:0; transform:translateY(30px);}100%{opacity:1; transform:translateY(0);}}
-
-/* Forms */
-.container{max-width:400px; margin:2rem auto; background:white; padding:2rem; border-radius:15px; box-shadow:0 8px 30px rgba(0,0,0,0.2); animation:slideFade 0.8s ease forwards;}
-input,button{width:100%; padding:0.7rem; margin:0.5rem 0; border-radius:8px; border:1px solid #ccc;}
-button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800); background-size:200% 200%; animation:btnGradient 3s ease infinite; color:white; font-weight:600; border:none; cursor:pointer; transition:0.3s;}
+@keyframes productAppear{0%{opacity:0;transform:translateY(30px);}100%{opacity:1;transform:translateY(0);}}
+.container{max-width:400px;margin:2rem auto;background:white;padding:2rem;border-radius:15px;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:slideFade 0.8s ease forwards;}
+input,button{width:100%;padding:0.7rem;margin:0.5rem 0;border-radius:8px;border:1px solid #ccc;}
+button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;font-weight:600;border:none;cursor:pointer;transition:0.3s;}
 button:hover{transform:scale(1.05);}
-
-/* Products */
-.products{display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin-top:2rem;}
-.product{
-  background:white; padding:1rem; border-radius:15px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.3); width:220px;
-  text-align:center; position:relative; overflow:hidden;
-  opacity:0; transform:translateY(30px); animation:productAppear 0.5s forwards;
-  transition:0.5s; transform-style: preserve-3d;
-}
-.product img{width:100%; border-radius:12px; transition:0.5s;}
-.product:hover{animation:floatHover 3s infinite; transform:scale(1.05) rotateX(5deg); box-shadow:0 15px 35px rgba(0,0,0,0.5);}
-.product h4{margin:0.5rem 0; color:#0d47a1;}
-.product p{margin:0.3rem 0; font-weight:600; color:#ff5722;}
-.product span{font-size:0.9rem; color:#555;}
-
-/* Modal */
-.modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center;}
-.modal-content{background:white; padding:2rem; border-radius:15px; width:90%; max-width:400px; position:relative; animation:slideFade 0.5s;}
-.closeBtn{position:absolute; top:10px; right:10px; background:#e53935; color:white; border:none; border-radius:50%; width:30px; height:30px; font-weight:bold; cursor:pointer;}
+.products{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:2rem;}
+.product{background:white;padding:1rem;border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,0.3);width:220px;text-align:center;position:relative;overflow:hidden;opacity:0;transform:translateY(30px);animation:productAppear 0.5s forwards;transition:0.5s;transform-style: preserve-3d;}
+.product img{width:100%;height:100px;object-fit:cover;border-radius:12px;transition:0.5s;}
+.product:hover{animation:floatHover 3s infinite;transform:scale(1.05) rotateX(5deg);box-shadow:0 15px 35px rgba(0,0,0,0.5);}
+.product h4{margin:0.5rem 0;color:#0d47a1;}
+.product p{margin:0.3rem 0;font-weight:600;color:#ff5722;}
+.product span{font-size:0.9rem;color:#555;}
+.product button{margin-top:5px;background:#25D366;width:100%;padding:0.5rem;border:none;border-radius:8px;color:white;cursor:pointer;}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+.modal-content{background:white;padding:2rem;border-radius:15px;width:90%;max-width:400px;position:relative;animation:slideFade 0.5s;}
+.closeBtn{position:absolute;top:10px;right:10px;background:#e53935;color:white;border:none;border-radius:50%;width:30px;height:30px;font-weight:bold;cursor:pointer;}
 .closeBtn:hover{background:#d32f2f;}
-
-/* Admin Table */
-table{width:100%; border-collapse:collapse; margin-top:1rem;}
-th,td{border:1px solid #ccc; padding:0.5rem; text-align:center;}
-th{background:#0d47a1; color:white;}
+table{width:100%;border-collapse:collapse;margin-top:1rem;}
+th,td{border:1px solid #ccc;padding:0.5rem;text-align:center;}
+th{background:#0d47a1;color:white;}
 </style>
 </head>
 <body>
@@ -91,22 +52,29 @@ th{background:#0d47a1; color:white;}
 <h1>M.AShop</h1>
 <nav>
 <button onclick="showSection('home')">Home</button>
+<button onclick="showSection('marketplace')">Marketplace</button>
 <button onclick="showSection('login')">Login</button>
 <button onclick="showSection('register')">Register</button>
 </nav>
 <button id="logoutBtn" onclick="logout()">Logout</button>
 </header>
 
-<!-- Hero -->
+<!-- Home -->
 <section id="home" class="active">
 <div class="hero">
 <canvas id="particles"></canvas>
 <h2>Selamat Datang di M.AShop!</h2>
-<p>Belanja mudah & cepat.Aplikasi ini untuk jual beli produk.
-  Silahkan daftar sebagai penjual untuk mulai menjual produkmu.</p>
+<p>Belanja mudah & cepat. Silahkan daftar sebagai penjual untuk mulai menjual produkmu.</p>
 <button onclick="showSection('register')">Daftar Sekarang</button>
 </div>
 <div class="products" id="previewProducts"></div>
+</section>
+
+<!-- Marketplace -->
+<section id="marketplace">
+<h2>Marketplace</h2>
+<p>Berisi semua produk dari berbagai penjual</p>
+<div class="products" id="allProducts"></div>
 </section>
 
 <!-- Register -->
@@ -115,6 +83,7 @@ th{background:#0d47a1; color:white;}
 <h2>Register Penjual Baru</h2>
 <input type="text" id="regUsername" placeholder="Username">
 <input type="password" id="regPassword" placeholder="Password">
+<input type="tel" id="regPhone" placeholder="Nomor WhatsApp (contoh: 81234567890)">
 <button id="registerBtn">Register</button>
 <p id="regError" style="color:red;"></p>
 </div>
@@ -134,7 +103,7 @@ th{background:#0d47a1; color:white;}
 <!-- Dashboard Penjual -->
 <section id="dashboard">
 <h2>Halo, <span id="userRole"></span></h2>
-<h3 id="dashboardTitle">Produk Anda</h3>
+<h3>Produk Anda</h3>
 <div class="products" id="userProducts"></div>
 <button id="addProductBtn">Tambah Produk</button>
 </section>
@@ -159,14 +128,13 @@ th{background:#0d47a1; color:white;}
 <h3>Tambah Produk</h3>
 <input type="text" id="prodName" placeholder="Nama Produk">
 <input type="number" id="prodPrice" placeholder="Harga Produk">
-<input type="file" id="prodImage" accept="image/*">
 <button id="saveProductBtn">Simpan Produk</button>
 </div>
 </div>
 
 <script>
 // ===== LocalStorage Init =====
-if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([{username:'admin',password:'MAlfian17xx',role:'Admin'}]));
+if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([{username:'admin',password:'admin123',role:'Admin'}]));
 if(!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
 function getUsers(){ return JSON.parse(localStorage.getItem('users')); }
 function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
@@ -191,36 +159,63 @@ renderProducts();
 function renderProducts(){
 const preview = document.getElementById('previewProducts');
 const userP = document.getElementById('userProducts');
-preview.innerHTML=''; userP.innerHTML='';
+const allP = document.getElementById('allProducts'); 
+preview.innerHTML=''; userP.innerHTML=''; allP.innerHTML='';
+
 const products = getProducts();
-products.forEach((p,i)=>{
+
+// Preview Home (4 produk terakhir)
+products.slice(-4).forEach((p,i)=>{
 const div = document.createElement('div'); div.className='product';
-div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.owner}</span>`;
+div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.owner}</span>
+<button onclick="window.open('https://wa.me/${p.phone}','_blank')">Hubungi Penjual</button>`;
 preview.appendChild(div);
 setTimeout(()=>{div.classList.add('show');}, i*150);
 });
+
+// Dashboard Penjual
 const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-if(!loggedUser) return;
+if(loggedUser){
 document.getElementById('userRole').textContent = loggedUser.username;
 products.forEach((p,i)=>{
 if(p.owner===loggedUser.username){
 const div = document.createElement('div'); div.className='product';
-div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.owner}</span>`;
+div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.owner}</span>
+<button onclick="window.open('https://wa.me/${p.phone}','_blank')">Hubungi Penjual</button>`;
 userP.appendChild(div);
 setTimeout(()=>{div.classList.add('show');}, i*150);
 }
 });
 }
 
+// Marketplace Semua Produk
+products.forEach((p,i)=>{
+const div = document.createElement('div'); div.className='product';
+div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.owner}</span>
+<button onclick="window.open('https://wa.me/${p.phone}','_blank')">Hubungi Penjual</button>`;
+allP.appendChild(div);
+setTimeout(()=>{div.classList.add('show');}, i*100);
+});
+}
+
 // ===== Register =====
 document.getElementById('registerBtn').addEventListener('click',()=>{
-const username=document.getElementById('regUsername').value.trim();
-const password=document.getElementById('regPassword').value.trim();
-const regError=document.getElementById('regError');
+let username=document.getElementById('regUsername').value.trim();
+let password=document.getElementById('regPassword').value.trim();
+let phone=document.getElementById('regPhone').value.trim();
+let regError=document.getElementById('regError');
 let users=getUsers();
-if(!username||!password){ regError.textContent='Isi semua data!'; return;}
+if(!username||!password||!phone){ regError.textContent='Isi semua data!'; return;}
 if(users.find(u=>u.username===username)){ regError.textContent='Username sudah dipakai!'; return;}
-users.push({username,password,role:'Penjual'}); saveUsers(users);
+
+// Tambahkan kode 62 otomatis
+if(!phone.startsWith('62')){
+    if(phone.startsWith('0')) phone='62'+phone.slice(1);
+    else phone='62'+phone;
+}
+
+users.push({username,password,phone,role:'Penjual'});
+saveUsers(users);
 alert('Akun berhasil dibuat! Silahkan login.'); showSection('login');
 });
 
@@ -246,24 +241,24 @@ function closeModal(){modal.style.display='none';}
 document.getElementById('saveProductBtn').addEventListener('click',()=>{
 const name=document.getElementById('prodName').value.trim();
 const price=document.getElementById('prodPrice').value.trim();
-const imageFile=document.getElementById('prodImage').files[0];
-if(!name||!price||!imageFile) return alert('Isi semua data!');
-const reader=new FileReader();
-reader.onload=function(e){
+const loggedUser=JSON.parse(localStorage.getItem('loggedInUser'));
+if(!name||!price){ alert('Isi semua data!'); return;}
 let products=getProducts();
-const owner=JSON.parse(localStorage.getItem('loggedInUser')).username;
-products.push({name,price,image:e.target.result,owner});
+products.push({
+  name,
+  price,
+  image:'https://via.placeholder.com/220x100?text=Produk',
+  owner:loggedUser.username,
+  phone:loggedUser.phone
+});
 saveProducts(products); renderProducts(); closeModal();
-document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';document.getElementById('prodImage').value='';
-};
-reader.readAsDataURL(imageFile);
+document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';
 });
 
 // ===== Admin View =====
 function showAdmin(){
 const users=getUsers();
 const products=getProducts();
-// Penjual Table
 const userTable=document.getElementById('adminUsersTable');
 userTable.innerHTML='<tr><th>Username</th><th>Role</th><th>Total Pendapatan (Rp)</th></tr>';
 users.forEach(u=>{
@@ -275,7 +270,6 @@ row.insertCell(1).textContent=u.role;
 row.insertCell(2).textContent=total.toLocaleString();
 }
 });
-// Produk Table
 const prodTable=document.getElementById('adminProductsTable');
 prodTable.innerHTML='<tr><th>Produk</th><th>Harga</th><th>Penjual</th></tr>';
 products.forEach(p=>{
@@ -297,17 +291,9 @@ const ctx=canvas.getContext('2d');
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 let particles=[];
 for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,speed:Math.random()*0.5+0.2});}
-function animateParticles(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-particles.forEach(p=>{
-ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.fill();
-p.y-=p.speed; if(p.y<0)p.y=canvas.height; if(p.x>canvas.width)p.x=0;
-});
-requestAnimationFrame(animateParticles);
-}
+function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.6)';ctx.fill();p.y-=p.speed;if(p.y<0)p.y=canvas.height;if(p.x>canvas.width)p.x=0;});requestAnimationFrame(animateParticles);}
 animateParticles();
 window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 </script>
-
 </body>
 </html>
