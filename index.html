@@ -43,13 +43,6 @@ input,textarea,select {width:100%;padding:10px;margin:5px 0;border-radius:10px;b
     <button onclick="show('sellerLogin')">Penjual</button>
   </div>
 
-  <!-- FILTER KATEGORI -->
-  <div id="filterKategori" style="display:none;padding:10px;">
-    <select id="kategoriFilter" onchange="filterKategori()">
-      <option value="">Semua Kategori</option>
-    </select>
-  </div>
-
   <div id="home"><div class="grid" id="homeList"></div></div>
   <div id="produk" style="display:none;"><div class="grid" id="produkList"></div></div>
 
@@ -60,7 +53,8 @@ input,textarea,select {width:100%;padding:10px;margin:5px 0;border-radius:10px;b
     <h4 id="profitText"></h4>
     <input id="namaPembeli" placeholder="Nama">
     <textarea id="alamat" placeholder="Alamat"></textarea>
-    <button onclick="checkout()" class="buy">Checkout</button>
+    <button onclick="checkout()" class="buy">Checkout Semua</button>
+    <button onclick="chatCart()" class="buy">Chat Per Item</button>
   </div>
 
   <div id="admin" style="display:none;padding:10px;">
@@ -84,7 +78,6 @@ input,textarea,select {width:100%;padding:10px;margin:5px 0;border-radius:10px;b
     <input id="nama" placeholder="Nama Produk">
     <input id="harga" type="number" placeholder="Harga Asli">
     <input id="komisi" type="number" placeholder="Komisi Admin">
-    <input id="kategori" placeholder="Kategori Produk (misal: Fashion)">
     <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
     <input type="file" id="gambar">
     <button onclick="tambahProduk()">Upload Produk</button>
@@ -99,213 +92,62 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let totalProfit = parseInt(localStorage.getItem("profit")) || 0;
 let currentSeller = "";
 
-/* NOTIF */
 function notif(text){
-  let n = document.getElementById("notif");
-  n.innerText = text;
-  n.style.display="block";
+  let n=document.getElementById("notif"); n.innerText=text; n.style.display="block";
   setTimeout(()=>{n.style.display="none"},2000);
 }
+function masuk(){landing.style.display="none"; main.style.display="block";}
+function show(p){["home","produk","cart","admin","sellerLogin","sellerPanel"].forEach(id=>{document.getElementById(id).style.display="none";}); document.getElementById(p).style.display="block"; tampil(); tampilCart();}
 
-/* MASUK */
-function masuk(){landing.style.display="none";main.style.display="block"; document.getElementById("filterKategori").style.display="block";}
+/* LOGIN */
+function loginAdmin(){if(adminPass.value==="admin123"){adminPanel.style.display="block"; document.getElementById("totalProfit").innerText="Rp "+totalProfit; notif("Login Admin Berhasil");} else notif("Password salah");}
+function loginSeller(){if(!sellerWA.value){notif("Isi nomor WA"); return;} currentSeller=sellerWA.value; sellerPanel.style.display="block"; notif("Login Penjual Berhasil");}
 
-/* NAV */
-function show(p){
-  ["home","produk","cart","admin","sellerLogin","sellerPanel"].forEach(id=>{
-    document.getElementById(id).style.display="none";
-  });
-  document.getElementById(p).style.display="block";
-  tampil(); tampilCart(); updateKategoriFilter();
-}
-
-/* LOGIN ADMIN */
-function loginAdmin(){
-  if(adminPass.value==="admin123"){
-    adminPanel.style.display="block";
-    document.getElementById("totalProfit").innerText="Rp "+totalProfit;
-    notif("Login Admin Berhasil");
-  } else notif("Password salah");
-}
-
-/* LOGIN SELLER */
-function loginSeller(){
-  if(!sellerWA.value){notif("Isi nomor WA"); return;}
-  currentSeller = sellerWA.value;
-  sellerPanel.style.display="block";
-  notif("Login Penjual Berhasil");
-}
-
-/* FORMAT WA OTOMATIS */
-function formatWA(wa){
-  wa = wa.replace(/[\s\-()]/g,"");
-  if(wa.startsWith("0")) wa = "62" + wa.slice(1);
-  return wa;
-}
+/* WA FORMAT */
+function formatWA(wa){wa=wa.replace(/[\s\-()]/g,""); if(wa.startsWith("0")) wa="62"+wa.slice(1); return wa;}
 
 /* TAMBAH PRODUK */
 function tambahProduk(){
-  if(!nama.value || !harga.value || !komisi.value || !deskripsi.value || !kategori.value){notif("Isi semua data!"); return;}
-  let file = gambar.files[0];
-  if(!file){notif("Pilih gambar"); return;}
-  let reader = new FileReader();
-  reader.onload = function(){
-    data.push({
-      nama:nama.value,
-      harga:harga.value,
-      komisi:komisi.value,
-      kategori:kategori.value,
-      deskripsi:deskripsi.value,
-      wa:currentSeller,
-      gambar:reader.result
-    });
-    localStorage.setItem("produk", JSON.stringify(data));
-    notif("Produk ditambahkan");
-    tampil();
-  }
-  reader.readAsDataURL(file);
+  if(!nama.value || !harga.value || !komisi.value || !deskripsi.value){notif("Isi semua data!"); return;}
+  let file=gambar.files[0]; if(!file){notif("Pilih gambar"); return;}
+  let reader=new FileReader(); reader.onload=function(){
+    data.push({nama:nama.value, harga:harga.value, komisi:komisi.value, deskripsi:deskripsi.value, wa:currentSeller, gambar:reader.result});
+    localStorage.setItem("produk", JSON.stringify(data)); notif("Produk ditambahkan"); tampil();
+  }; reader.readAsDataURL(file);
 }
 
 /* TAMPIL */
-function tampil(filterCat=""){
-  let home=document.getElementById("homeList");
-  let produk=document.getElementById("produkList");
-  home.innerHTML=""; produk.innerHTML="";
-
-  let tampilData = filterCat ? data.filter(p=>p.kategori.toLowerCase()===filterCat.toLowerCase()) : data;
-
-  tampilData.forEach((p,i)=>{
-    let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
-    let tombolHapus = (p.wa === currentSeller) ? `<button class="buy" onclick="hapus(${i})">Hapus</button>` : "";
-
-    let html=`
-    <div class="card">
-      <img src="${p.gambar}">
-      <div class="info">
-        <b>${p.nama}</b>
-        <div class="harga">Rp ${hargaJual}</div>
-        <small>Kategori: ${p.kategori}</small><br>
-        <small>${p.deskripsi}</small>
-      </div>
-      <button class="buy" onclick="addCart(${i})">Beli</button>
-      <button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>
-      ${tombolHapus}
-    </div>`;
-    home.innerHTML+=html;
-    produk.innerHTML+=html;
-  });
+function tampil(){let home=document.getElementById("homeList"); let produk=document.getElementById("produkList"); home.innerHTML=""; produk.innerHTML="";
+  data.forEach((p,i)=>{let hargaJual=parseInt(p.harga)+parseInt(p.komisi||0); let tombolHapus=(p.wa===currentSeller)?`<button class="buy" onclick="hapus(${i})">Hapus</button>`:"";
+    let html=`<div class="card"><img src="${p.gambar}"><div class="info"><b>${p.nama}</b><div class="harga">Rp ${hargaJual}</div><small>${p.deskripsi}</small></div><button class="buy" onclick="addCart(${i})">Beli</button><button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>${tombolHapus}</div>`;
+    home.innerHTML+=html; produk.innerHTML+=html;});
 }
 
 /* CHAT */
-function chat(wa,nama){
-  let nomor = formatWA(wa);
-  window.open("https://wa.me/" + nomor + "?text=Halo saya tertarik dengan " + encodeURIComponent(nama));
-}
+function chat(wa,nama){let nomor=formatWA(wa); let pesan="🛒 *INFO PRODUK*\n\nProduk: "+nama+"\nSilakan hubungi saya jika tertarik 😊"; window.open("https://wa.me/"+nomor+"?text="+encodeURIComponent(pesan));}
 
-/* HAPUS PRODUK */
-function hapus(i){
-  data.splice(i,1);
-  localStorage.setItem("produk", JSON.stringify(data));
-  notif("Produk dihapus");
-  tampil();
-}
+/* HAPUS */
+function hapus(i){data.splice(i,1); localStorage.setItem("produk", JSON.stringify(data)); notif("Produk dihapus"); tampil();}
 
 /* CART */
-function addCart(i){
-  cart.push(data[i]);
-  localStorage.setItem("cart", JSON.stringify(cart));
-  notif("Masuk keranjang");
-}
+function addCart(i){cart.push(data[i]); localStorage.setItem("cart", JSON.stringify(cart)); notif("Masuk keranjang");}
+function tampilCart(){let total=0, profit=0, list=""; cart.forEach(p=>{let harga=parseInt(p.harga)+parseInt(p.komisi||0); total+=harga; profit+=parseInt(p.komisi||0); list+=p.nama+" - Rp "+harga+"<br>";}); cartList.innerHTML=list; totalText.innerText="Total: Rp "+total; profitText.innerText="Keuntungan kamu: Rp "+profit;}
 
-function tampilCart(){
-  let total=0, profit=0, list="";
-  cart.forEach(p=>{
-    let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
-    total+=hargaJual; profit+=parseInt(p.komisi||0);
-    list+=p.nama+" - Rp "+hargaJual+"<br>";
-  });
-  cartList.innerHTML=list;
-  totalText.innerText="Total: Rp "+total;
-  profitText.innerText="Keuntungan kamu: Rp "+profit;
-}
+/* CHECKOUT SEMUA */
+function checkout(){let namaPembeli=document.getElementById("namaPembeli").value; let alamat=document.getElementById("alamat").value;
+if(!namaPembeli||!alamat){notif("Isi data dulu!");return;} if(cart.length===0){notif("Keranjang kosong!");return;}
+let group={}; cart.forEach(p=>{if(!group[p.wa]) group[p.wa]=[]; group[p.wa].push(p);});
+for(let wa in group){let pesan="🛒 *PESANAN BARU*\n─────────────────\n"; pesan+="👤 Nama: "+encodeURIComponent(namaPembeli)+"\n🏠 Alamat: "+encodeURIComponent(alamat)+"\n\n"; let total=0, profit=0; group[wa].forEach((p,i)=>{let harga=parseInt(p.harga)+parseInt(p.komisi||0); pesan+=(i+1)+". "+encodeURIComponent(p.nama)+" - Rp"+harga+"\n"; total+=harga; profit+=parseInt(p.komisi||0);}); pesan+="\n💰 Total: Rp"+total+"\n📈 Keuntungan Admin: Rp"+profit+"\n─────────────────\nTerima kasih! 🙏"; totalProfit+=profit; window.open("https://wa.me/"+formatWA(wa)+"?text="+encodeURIComponent(pesan));}
+localStorage.setItem("profit", totalProfit); cart=[]; localStorage.setItem("cart", JSON.stringify(cart)); tampilCart(); notif("Pesanan dikirim!");}
 
-/* CHECKOUT */
-function checkout(){
-  let namaPembeli = document.getElementById("namaPembeli").value;
-  let alamat = document.getElementById("alamat").value;
-  if(!namaPembeli || !alamat){notif("Isi data dulu!"); return;}
-
-  let group={};
-  cart.forEach(p=>{
-    if(!group[p.wa]) group[p.wa]=[];
-    group[p.wa].push(p);
-  });
-
-  for(let wa in group){
-    let pesan="🛒 PESANAN BARU%0A";
-    pesan+="Nama: "+encodeURIComponent(namaPembeli)+"%0AAlamat: "+encodeURIComponent(alamat)+"%0A%0A";
-
-    let profit=0;
-    group[wa].forEach((p,i)=>{
-      let hargaJual=parseInt(p.harga)+parseInt(p.komisi||0);
-      pesan += (i+1)+". "+encodeURIComponent(p.nama)+" Rp"+hargaJual+"%0A";
-      profit += parseInt(p.komisi||0);
-    });
-
-    totalProfit += profit;
-    window.open("https://wa.me/"+formatWA(wa)+"?text="+pesan);
-  }
-
-  localStorage.setItem("profit", totalProfit);
-  cart=[]; localStorage.setItem("cart", JSON.stringify(cart));
-  tampilCart();
-  notif("Pesanan dikirim!");
-}
-
-/* FILTER KATEGORI */
-function updateKategoriFilter(){
-  let select = document.getElementById("kategoriFilter");
-  let categories = [...new Set(data.map(p=>p.kategori))];
-  select.innerHTML = `<option value="">Semua Kategori</option>`;
-  categories.forEach(cat=>{
-    select.innerHTML += `<option value="${cat}">${cat}</option>`;
-  });
-}
-
-function filterKategori(){
-  let cat = document.getElementById("kategoriFilter").value;
-  tampil(cat);
-}
-
-/* SEARCH */
-function cari(t){
-  let produk=document.getElementById("produkList");
-  produk.innerHTML="";
-  data.filter(p=>p.nama.toLowerCase().includes(t.toLowerCase()))
-      .forEach((p,i)=>{
-    let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
-    let tombolHapus = (p.wa === currentSeller) ? `<button class="buy" onclick="hapus(${i})">Hapus</button>` : "";
-    let html=`
-      <div class="card">
-        <img src="${p.gambar}">
-        <div class="info">
-          <b>${p.nama}</b>
-          <div class="harga">Rp ${hargaJual}</div>
-          <small>Kategori: ${p.kategori}</small><br>
-          <small>${p.deskripsi}</small>
-        </div>
-        <button class="buy" onclick="addCart(${i})">Beli</button>
-        <button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>
-        ${tombolHapus}
-      </div>`;
-    produk.innerHTML += html;
-  });
-  show('produk');
-}
-
+/* CHAT PER ITEM CART */
+function chatCart(){if(cart.length===0){notif("Keranjang kosong!"); return;}
+cart.forEach(p=>{
+  let pesan="🛒 *INFO PRODUK*\n\nProduk: "+p.nama+"\nHarga: Rp"+(parseInt(p.harga)+parseInt(p.komisi||0))+"\nDeskripsi: "+p.deskripsi+"\nSilakan hubungi saya jika tertarik 😊";
+  window.open("https://wa.me/"+formatWA(p.wa)+"?text="+encodeURIComponent(pesan));
+});}
+function cari(t){let produk=document.getElementById("produkList"); produk.innerHTML=""; data.filter(p=>p.nama.toLowerCase().includes(t.toLowerCase())).forEach((p,i)=>{let harga=parseInt(p.harga)+parseInt(p.komisi||0); let tombolHapus=(p.wa===currentSeller)?`<button class="buy" onclick="hapus(${i})">Hapus</button>`:""; let html=`<div class="card"><img src="${p.gambar}"><div class="info"><b>${p.nama}</b><div class="harga">Rp ${harga}</div><small>${p.deskripsi}</small></div><button class="buy" onclick="addCart(${i})">Beli</button><button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>${tombolHapus}</div>`; produk.innerHTML+=html;}); show('produk');}
 tampil();
-updateKategoriFilter();
 </script>
-
 </body>
 </html>
