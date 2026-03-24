@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Pro</title>
+<title>M.AShop Pro - HP Ready</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <!-- Firebase -->
@@ -14,28 +14,28 @@
 
 <style>
 body{font-family:'Poppins',sans-serif;margin:0;padding:0;background:linear-gradient(135deg,#f9a825,#0d47a1);color:#333;}
-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:rgba(0,0,0,0.2);position:sticky;top:0;backdrop-filter:blur(8px);}
-header h1{color:white;font-size:1.8rem;}
-nav{display:flex;gap:1rem;}
-nav button, #logoutBtn{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;padding:0.5rem 1rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:0.3s;}
+header{display:flex;justify-content:space-between;align-items:center;padding:1rem;position:sticky;top:0;background:rgba(0,0,0,0.2);backdrop-filter:blur(8px);}
+header h1{color:white;font-size:1.6rem;}
+nav{display:flex;gap:0.5rem;}
+nav button, #logoutBtn{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);background-size:200% 200%;animation:btnGradient 3s ease infinite;color:white;padding:0.4rem 0.8rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:0.3s;}
 nav button:hover, #logoutBtn:hover{transform:scale(1.05);}
 #logoutBtn{display:none;background:#e53935;}
-.hero{position:relative;text-align:center;padding:1rem;min-height:40vh;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;}
-.hero h2{font-size:3rem;margin:0.5rem 0;color:white;}
-.hero p{font-size:1.2rem;margin:0.5rem 0 1.5rem 0;color:white;}
-.container{max-width:400px;margin:2rem auto;background:white;padding:2rem;border-radius:15px;box-shadow:0 8px 30px rgba(0,0,0,0.3);}
-input,button{width:100%;padding:0.7rem;margin:0.5rem 0;border-radius:8px;border:1px solid #ccc;}
+.hero{position:relative;text-align:center;padding:1rem;min-height:35vh;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;}
+.hero h2{font-size:2.4rem;margin:0.5rem 0;color:white;}
+.hero p{font-size:1rem;margin:0.5rem 0 1rem 0;color:white;}
+.container{max-width:360px;margin:1.5rem auto;background:white;padding:1.5rem;border-radius:15px;box-shadow:0 6px 25px rgba(0,0,0,0.3);}
+input,button{width:100%;padding:0.6rem;margin:0.4rem 0;border-radius:8px;border:1px solid #ccc;}
 button{cursor:pointer;}
-.products{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:2rem;}
-.product{background:white;padding:1rem;border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,0.3);width:220px;text-align:center;position:relative;transition:0.5s;}
-.product img{width:100%;border-radius:12px;}
-.product h4{margin:0.5rem 0;color:#0d47a1;}
-.product p{margin:0.3rem 0;font-weight:600;color:#ff5722;}
-.product span{font-size:0.9rem;color:#555;}
-.product button{margin-top:0.3rem;font-size:0.9rem;}
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
-.modal-content{background:white;padding:2rem;border-radius:15px;width:90%;max-width:400px;position:relative;}
-.closeBtn{position:absolute;top:10px;right:10px;background:#e53935;color:white;border:none;border-radius:50%;width:30px;height:30px;font-weight:bold;cursor:pointer;}
+.products{display:flex;flex-wrap:wrap;gap:0.8rem;justify-content:center;margin-top:1.5rem;}
+.product{background:white;padding:0.8rem;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.3);width:160px;text-align:center;position:relative;transition:0.3s;}
+.product img{width:100%;border-radius:10px;}
+.product h4{margin:0.4rem 0;color:#0d47a1;font-size:0.9rem;}
+.product p{margin:0.2rem 0;font-weight:600;color:#ff5722;font-size:0.85rem;}
+.product span{font-size:0.75rem;color:#555;}
+.product button{margin-top:0.3rem;font-size:0.75rem;padding:0.3rem;}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:100;}
+.modal-content{background:white;padding:1.5rem;border-radius:12px;width:90%;max-width:350px;position:relative;}
+.closeBtn{position:absolute;top:8px;right:8px;background:#e53935;color:white;border:none;border-radius:50%;width:28px;height:28px;font-weight:bold;cursor:pointer;}
 .closeBtn:hover{background:#d32f2f;}
 @keyframes btnGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 </style>
@@ -55,7 +55,7 @@ button{cursor:pointer;}
 <section id="home" class="active">
 <div class="hero">
 <h2>Selamat Datang di M.AShop!</h2>
-<p>Belanja mudah & cepat. Daftar sebagai penjual untuk mulai menjual produkmu.</p>
+<p>Belanja cepat. Daftar sebagai penjual untuk mulai menjual produkmu.</p>
 <button onclick="showSection('register')">Daftar Sekarang</button>
 </div>
 <div class="products" id="previewProducts"></div>
@@ -63,12 +63,12 @@ button{cursor:pointer;}
 
 <section id="register">
 <div class="container">
-<h2>Register Penjual Baru</h2>
+<h2>Register Penjual</h2>
 <input type="text" id="regUsername" placeholder="Username">
 <input type="text" id="regWA" placeholder="Nomor WA (contoh 81234567890)">
 <input type="password" id="regPassword" placeholder="Password">
-<button id="registerBtn">Register</button>
-<p id="regError" style="color:red;"></p>
+<button id="registerBtn">Daftar</button>
+<p id="regError" style="color:red;font-size:0.8rem;"></p>
 </div>
 </section>
 
@@ -78,7 +78,7 @@ button{cursor:pointer;}
 <input type="text" id="loginWA" placeholder="Nomor WA">
 <input type="password" id="loginPassword" placeholder="Password">
 <button id="loginBtn">Login</button>
-<p id="loginError" style="color:red;"></p>
+<p id="loginError" style="color:red;font-size:0.8rem;"></p>
 </div>
 </section>
 
