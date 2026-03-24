@@ -4,37 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Toko M.A17 Marketplace</title>
-
 <style>
 body {margin:0;font-family:Arial;background:#f5f5f5;}
-#landing {
-  height:100vh;
-  background:linear-gradient(135deg,#ff5722,#ff9800);
-  color:white;display:flex;flex-direction:column;
-  justify-content:center;align-items:center;text-align:center;
-}
+#landing {height:100vh;background:linear-gradient(135deg,#ff5722,#ff9800);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
 button {cursor:pointer}
-
-/* NAV */
 .navbar {background:#ff5722;color:white;padding:15px;display:flex;justify-content:space-between;}
 .menu {display:flex;justify-content:space-around;background:white;padding:10px;}
 .menu button {border:none;background:none;font-weight:bold}
-
-/* GRID */
 .grid {display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}
 .card {background:white;border-radius:15px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
 .card img {width:100%}
 .info {padding:10px}
 .harga {color:#ff5722;font-weight:bold}
-.buy {background:#ff5722;color:white;border:none;width:100%;padding:10px}
-
-input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none}
+.buy {background:#ff5722;color:white;border:none;width:100%;padding:10px;margin-top:5px;border-radius:10px;}
+input,textarea,select {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none;}
+#notif {position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none;z-index:999;}
 </style>
 </head>
-
 <body>
 
-<!-- LANDING -->
 <div id="landing">
   <h1>🛒 Toko M.A17 Marketplace</h1>
   <p>Platform jualan & dropship modern 🔥</p>
@@ -42,72 +30,68 @@ input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:n
 </div>
 
 <div id="main" style="display:none;">
+  <div class="navbar">
+    <b>M.A17</b>
+    <input type="text" placeholder="Cari..." oninput="cari(this.value)">
+  </div>
 
-<div class="navbar">
-  <b>M.A17</b>
-  <input type="text" placeholder="Cari..." oninput="cari(this.value)">
-</div>
+  <div class="menu">
+    <button onclick="show('home')">Home</button>
+    <button onclick="show('produk')">Produk</button>
+    <button onclick="show('cart')">Keranjang</button>
+    <button onclick="show('admin')">Admin</button>
+    <button onclick="show('sellerLogin')">Penjual</button>
+  </div>
 
-<div class="menu">
-  <button onclick="show('home')">Home</button>
-  <button onclick="show('produk')">Produk</button>
-  <button onclick="show('cart')">Keranjang</button>
-  <button onclick="show('admin')">Admin</button>
-  <button onclick="show('sellerLogin')">Penjual</button>
-</div>
+  <!-- FILTER KATEGORI -->
+  <div id="filterKategori" style="display:none;padding:10px;">
+    <select id="kategoriFilter" onchange="filterKategori()">
+      <option value="">Semua Kategori</option>
+    </select>
+  </div>
 
-<!-- HOME -->
-<div id="home"><div class="grid" id="homeList"></div></div>
+  <div id="home"><div class="grid" id="homeList"></div></div>
+  <div id="produk" style="display:none;"><div class="grid" id="produkList"></div></div>
 
-<!-- PRODUK -->
-<div id="produk" style="display:none;"><div class="grid" id="produkList"></div></div>
+  <div id="cart" style="display:none;padding:10px;">
+    <h2>Keranjang</h2>
+    <div id="cartList"></div>
+    <h3 id="totalText"></h3>
+    <h4 id="profitText"></h4>
+    <input id="namaPembeli" placeholder="Nama">
+    <textarea id="alamat" placeholder="Alamat"></textarea>
+    <button onclick="checkout()" class="buy">Checkout</button>
+  </div>
 
-<!-- CART -->
-<div id="cart" style="display:none;padding:10px;">
-  <h2>Keranjang</h2>
-  <div id="cartList"></div>
-  <h3 id="total"></h3>
-  <h4 id="profit"></h4>
+  <div id="admin" style="display:none;padding:10px;">
+    <h2>Admin Login</h2>
+    <input id="adminPass" type="password">
+    <button onclick="loginAdmin()">Login</button>
+    <div id="adminPanel" style="display:none;">
+      <h3>Total Keuntungan</h3>
+      <h2 id="totalProfit">Rp 0</h2>
+    </div>
+  </div>
 
-  <input id="namaPembeli" placeholder="Nama">
-  <textarea id="alamat" placeholder="Alamat"></textarea>
+  <div id="sellerLogin" style="display:none;padding:10px;">
+    <h2>Login Penjual</h2>
+    <input id="sellerWA" placeholder="Nomor WA (628...)">
+    <button onclick="loginSeller()">Masuk</button>
+  </div>
 
-  <button onclick="checkout()" class="buy">Checkout</button>
-</div>
-
-<!-- ADMIN -->
-<div id="admin" style="display:none;padding:10px;">
-  <h2>Admin Login</h2>
-  <input id="adminPass" type="password">
-  <button onclick="loginAdmin()">Login</button>
-
-  <div id="adminPanel" style="display:none;">
-    <h3>Total Keuntungan</h3>
-    <h2 id="totalProfit">Rp 0</h2>
+  <div id="sellerPanel" style="display:none;padding:10px;">
+    <h2>Panel Penjual</h2>
+    <input id="nama" placeholder="Nama Produk">
+    <input id="harga" type="number" placeholder="Harga Asli">
+    <input id="komisi" type="number" placeholder="Komisi Admin">
+    <input id="kategori" placeholder="Kategori Produk (misal: Fashion)">
+    <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
+    <input type="file" id="gambar">
+    <button onclick="tambahProduk()">Upload Produk</button>
   </div>
 </div>
 
-<!-- SELLER LOGIN -->
-<div id="sellerLogin" style="display:none;padding:10px;">
-  <h2>Login Penjual</h2>
-  <input id="sellerWA" placeholder="Nomor WA">
-  <button onclick="loginSeller()">Masuk</button>
-</div>
-
-<!-- SELLER PANEL -->
-<div id="sellerPanel" style="display:none;padding:10px;">
-  <h2>Panel Penjual</h2>
-
-  <input id="nama" placeholder="Nama Produk">
-  <input id="harga" type="number" placeholder="Harga Asli">
-  <input id="komisi" type="number" placeholder="Komisi Admin">
-  <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
-  <input type="file" id="gambar">
-
-  <button onclick="tambahProduk()">Upload Produk</button>
-</div>
-
-</div>
+<div id="notif"></div>
 
 <script>
 let data = JSON.parse(localStorage.getItem("produk")) || [];
@@ -115,8 +99,16 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let totalProfit = parseInt(localStorage.getItem("profit")) || 0;
 let currentSeller = "";
 
+/* NOTIF */
+function notif(text){
+  let n = document.getElementById("notif");
+  n.innerText = text;
+  n.style.display="block";
+  setTimeout(()=>{n.style.display="none"},2000);
+}
+
 /* MASUK */
-function masuk(){landing.style.display="none";main.style.display="block";}
+function masuk(){landing.style.display="none";main.style.display="block"; document.getElementById("filterKategori").style.display="block";}
 
 /* NAV */
 function show(p){
@@ -124,7 +116,7 @@ function show(p){
     document.getElementById(id).style.display="none";
   });
   document.getElementById(p).style.display="block";
-  tampil(); tampilCart();
+  tampil(); tampilCart(); updateKategoriFilter();
 }
 
 /* LOGIN ADMIN */
@@ -132,44 +124,59 @@ function loginAdmin(){
   if(adminPass.value==="admin123"){
     adminPanel.style.display="block";
     document.getElementById("totalProfit").innerText="Rp "+totalProfit;
-  }
+    notif("Login Admin Berhasil");
+  } else notif("Password salah");
 }
 
 /* LOGIN SELLER */
 function loginSeller(){
+  if(!sellerWA.value){notif("Isi nomor WA"); return;}
   currentSeller = sellerWA.value;
   sellerPanel.style.display="block";
+  notif("Login Penjual Berhasil");
+}
+
+/* FORMAT WA OTOMATIS */
+function formatWA(wa){
+  wa = wa.replace(/[\s\-()]/g,"");
+  if(wa.startsWith("0")) wa = "62" + wa.slice(1);
+  return wa;
 }
 
 /* TAMBAH PRODUK */
 function tambahProduk(){
+  if(!nama.value || !harga.value || !komisi.value || !deskripsi.value || !kategori.value){notif("Isi semua data!"); return;}
   let file = gambar.files[0];
+  if(!file){notif("Pilih gambar"); return;}
   let reader = new FileReader();
-
   reader.onload = function(){
     data.push({
       nama:nama.value,
       harga:harga.value,
       komisi:komisi.value,
+      kategori:kategori.value,
       deskripsi:deskripsi.value,
       wa:currentSeller,
       gambar:reader.result
     });
     localStorage.setItem("produk", JSON.stringify(data));
-    alert("Produk ditambahkan");
+    notif("Produk ditambahkan");
     tampil();
   }
-  if(file) reader.readAsDataURL(file);
+  reader.readAsDataURL(file);
 }
 
 /* TAMPIL */
-function tampil(){
+function tampil(filterCat=""){
   let home=document.getElementById("homeList");
   let produk=document.getElementById("produkList");
   home.innerHTML=""; produk.innerHTML="";
 
-  data.forEach((p,i)=>{
+  let tampilData = filterCat ? data.filter(p=>p.kategori.toLowerCase()===filterCat.toLowerCase()) : data;
+
+  tampilData.forEach((p,i)=>{
     let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
+    let tombolHapus = (p.wa === currentSeller) ? `<button class="buy" onclick="hapus(${i})">Hapus</button>` : "";
 
     let html=`
     <div class="card">
@@ -177,11 +184,12 @@ function tampil(){
       <div class="info">
         <b>${p.nama}</b>
         <div class="harga">Rp ${hargaJual}</div>
-        <small>Asli: Rp ${p.harga}</small><br>
+        <small>Kategori: ${p.kategori}</small><br>
         <small>${p.deskripsi}</small>
       </div>
       <button class="buy" onclick="addCart(${i})">Beli</button>
       <button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>
+      ${tombolHapus}
     </div>`;
     home.innerHTML+=html;
     produk.innerHTML+=html;
@@ -190,60 +198,83 @@ function tampil(){
 
 /* CHAT */
 function chat(wa,nama){
-  window.open("https://wa.me/"62"?text=Halo saya tertarik dengan "+nama);
+  let nomor = formatWA(wa);
+  window.open("https://wa.me/" + nomor + "?text=Halo saya tertarik dengan " + encodeURIComponent(nama));
+}
+
+/* HAPUS PRODUK */
+function hapus(i){
+  data.splice(i,1);
+  localStorage.setItem("produk", JSON.stringify(data));
+  notif("Produk dihapus");
+  tampil();
 }
 
 /* CART */
 function addCart(i){
   cart.push(data[i]);
   localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Masuk keranjang");
+  notif("Masuk keranjang");
 }
 
 function tampilCart(){
-  let total=0, profit=0;
-  let list="";
+  let total=0, profit=0, list="";
   cart.forEach(p=>{
     let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
-    total+=hargaJual;
-    profit+=parseInt(p.komisi||0);
+    total+=hargaJual; profit+=parseInt(p.komisi||0);
     list+=p.nama+" - Rp "+hargaJual+"<br>";
   });
   cartList.innerHTML=list;
-  total.innerText="Total: Rp "+total;
-  profit.innerText="Keuntungan kamu: Rp "+profit;
+  totalText.innerText="Total: Rp "+total;
+  profitText.innerText="Keuntungan kamu: Rp "+profit;
 }
 
 /* CHECKOUT */
 function checkout(){
   let namaPembeli = document.getElementById("namaPembeli").value;
   let alamat = document.getElementById("alamat").value;
+  if(!namaPembeli || !alamat){notif("Isi data dulu!"); return;}
 
   let group={};
-
   cart.forEach(p=>{
     if(!group[p.wa]) group[p.wa]=[];
     group[p.wa].push(p);
   });
 
   for(let wa in group){
-    let pesan="Pesanan%0A"+namaPembeli+"%0A"+alamat+"%0A";
-    let profit=0;
+    let pesan="🛒 PESANAN BARU%0A";
+    pesan+="Nama: "+encodeURIComponent(namaPembeli)+"%0AAlamat: "+encodeURIComponent(alamat)+"%0A%0A";
 
-    group[wa].forEach(p=>{
+    let profit=0;
+    group[wa].forEach((p,i)=>{
       let hargaJual=parseInt(p.harga)+parseInt(p.komisi||0);
-      pesan+=p.nama+" Rp"+hargaJual+"%0A";
-      profit+=parseInt(p.komisi||0);
+      pesan += (i+1)+". "+encodeURIComponent(p.nama)+" Rp"+hargaJual+"%0A";
+      profit += parseInt(p.komisi||0);
     });
 
-    totalProfit+=profit;
-    window.open("https://wa.me/"+wa+"?text="+pesan);
+    totalProfit += profit;
+    window.open("https://wa.me/"+formatWA(wa)+"?text="+pesan);
   }
 
   localStorage.setItem("profit", totalProfit);
-  cart=[];
-  localStorage.setItem("cart", JSON.stringify(cart));
+  cart=[]; localStorage.setItem("cart", JSON.stringify(cart));
   tampilCart();
+  notif("Pesanan dikirim!");
+}
+
+/* FILTER KATEGORI */
+function updateKategoriFilter(){
+  let select = document.getElementById("kategoriFilter");
+  let categories = [...new Set(data.map(p=>p.kategori))];
+  select.innerHTML = `<option value="">Semua Kategori</option>`;
+  categories.forEach(cat=>{
+    select.innerHTML += `<option value="${cat}">${cat}</option>`;
+  });
+}
+
+function filterKategori(){
+  let cat = document.getElementById("kategoriFilter").value;
+  tampil(cat);
 }
 
 /* SEARCH */
@@ -251,13 +282,29 @@ function cari(t){
   let produk=document.getElementById("produkList");
   produk.innerHTML="";
   data.filter(p=>p.nama.toLowerCase().includes(t.toLowerCase()))
-  .forEach(p=>{
-    produk.innerHTML+=`<div class="card"><img src="${p.gambar}"><div class="info">${p.nama}</div></div>`;
+      .forEach((p,i)=>{
+    let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
+    let tombolHapus = (p.wa === currentSeller) ? `<button class="buy" onclick="hapus(${i})">Hapus</button>` : "";
+    let html=`
+      <div class="card">
+        <img src="${p.gambar}">
+        <div class="info">
+          <b>${p.nama}</b>
+          <div class="harga">Rp ${hargaJual}</div>
+          <small>Kategori: ${p.kategori}</small><br>
+          <small>${p.deskripsi}</small>
+        </div>
+        <button class="buy" onclick="addCart(${i})">Beli</button>
+        <button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>
+        ${tombolHapus}
+      </div>`;
+    produk.innerHTML += html;
   });
   show('produk');
 }
 
 tampil();
+updateKategoriFilter();
 </script>
 
 </body>
