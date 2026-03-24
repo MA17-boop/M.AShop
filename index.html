@@ -6,7 +6,7 @@
 <title>MA17 Marketplace HP</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body{margin:0;padding:0;font-family:'Poppins',sans-serif;background:#111;color:#fff;}
+body{margin:0;padding:0;font-family:'Poppins',sans-serif;background:#111;color:#fff;transition:0.3s;}
 h1,h2,h3{text-align:center;margin:10px 0;}
 input,button,select,textarea{padding:8px;margin:5px;border-radius:5px;border:none;outline:none;}
 button{cursor:pointer;}
@@ -14,7 +14,6 @@ button{cursor:pointer;}
 .card{background:#222;padding:15px;margin:10px;border-radius:12px;width:220px;position:relative;overflow:hidden;transition:0.4s;}
 .card:hover{transform:scale(1.05);box-shadow:0 0 25px #f9a825;}
 .card img{width:100%;height:180px;border-radius:5px;object-fit:cover;transition:0.5s;}
-.ribbon{position:absolute;top:10px;left:-5px;background:red;color:#fff;padding:5px 10px;font-size:0.8rem;font-weight:bold;transform:rotate(-15deg);}
 #loginBox,#signupBox,#adminBox,#shopBox,#cartBox{display:none;flex-direction:column;align-items:center;padding:30px;max-width:450px;margin:20px auto;background:#111;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.7);}
 input[type="text"],input[type="password"],input[type="number"],input[type="file"],textarea{width:100%;background:#222;color:#fff;}
 input[type="submit"],button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);color:#fff;font-weight:600;transition:0.3s;}
@@ -24,12 +23,14 @@ th,td{padding:10px;border:1px solid #333;text-align:left;}
 th{background:#222;}
 #notification{position:fixed;top:10px;right:10px;padding:12px 25px;background:#ff9800;color:#111;border-radius:8px;display:none;font-weight:700;z-index:9999;animation:slideDown 0.5s forwards;}
 @keyframes slideDown{0%{opacity:0;transform:translateY(-20px);}100%{opacity:1;transform:translateY(0);}}
+#welcomeBanner{font-size:1.5rem;color:#ffc107;opacity:0;margin-top:20px;text-align:center;}
 @media (max-width:500px){.card{width:90%;} #loginBox,#signupBox,#adminBox,#shopBox,#cartBox{width:95%;}}
 </style>
 </head>
 <body class="dark">
 
 <div id="notification"></div>
+<div id="welcomeBanner">Selamat Datang di Toko MA17!</div>
 <div style="text-align:center;margin:10px;">
 <button id="toggleTheme"><i class="fa-solid fa-moon"></i> Toggle Theme</button>
 </div>
@@ -106,6 +107,14 @@ const notification=document.getElementById('notification');
 function showNotification(msg){notification.innerText=msg;notification.style.display='block';setTimeout(()=>{notification.style.display='none';},2000);}
 function hideAll(){document.getElementById('loginBox').style.display='none';document.getElementById('signupBox').style.display='none';document.getElementById('adminBox').style.display='none';document.getElementById('shopBox').style.display='none';document.getElementById('cartBox').style.display='none';}
 
+// ===== Welcome Animation =====
+const banner=document.getElementById('welcomeBanner');
+let opacity=0,topPos=20;
+const fadeInterval=setInterval(()=>{
+  if(opacity<1){opacity+=0.02; topPos-=0.2; banner.style.opacity=opacity; banner.style.marginTop=topPos+'px';}
+  else clearInterval(fadeInterval);
+},20);
+
 // ===== Theme =====
 const bodyTag=document.body;
 document.getElementById('toggleTheme').addEventListener('click',()=>{bodyTag.classList.toggle('dark');bodyTag.classList.toggle('light');});
@@ -153,14 +162,9 @@ document.getElementById('tambahBarang').addEventListener('click',()=>{
   const k=document.getElementById('kategoriBarang').value;
   const wa=document.getElementById('waPenjual').value.trim();
   const alamat=document.getElementById('alamatPenjual').value.trim();
-
   if(!n||!h||!fInput.files.length||!wa||!alamat){alert('Isi semua data dan pilih foto!'); return;}
-  const file=fInput.files[0];
-
-  if(file.size>10*1024*1024){alert('Ukuran gambar maksimal 10MB!'); return;}
-
+  const file=fInput.files[0]; if(file.size>10*1024*1024){alert('Ukuran gambar maksimal 10MB!'); return;}
   let waFinal = wa.startsWith("0") ? "62"+wa.slice(1) : wa;
-
   const reader=new FileReader();
   reader.onload=function(e){
     const imgData=e.target.result;
@@ -169,7 +173,6 @@ document.getElementById('tambahBarang').addEventListener('click',()=>{
     updateKategoriOptions(); loadBarangAdmin(); renderShop(document.getElementById('searchInput').value);
   };
   reader.readAsDataURL(file);
-
   document.getElementById('namaBarang').value=''; 
   document.getElementById('hargaBarang').value=''; 
   document.getElementById('fotoBarang').value=''; 
@@ -197,7 +200,7 @@ function loadBarangAdmin(){
 // ===== Shop =====
 function showShop(user){
   hideAll(); document.getElementById('shopBox').style.display='block'; document.getElementById('shopUser').innerText=user;
-  updateCartCount(); renderShop('');
+  renderShop('');
 }
 document.getElementById('logoutShop').addEventListener('click',()=>{localStorage.removeItem('currentUser');hideAll();document.getElementById('loginBox').style.display='flex';});
 document.getElementById('searchInput').addEventListener('input',(e)=>{renderShop(e.target.value);});
