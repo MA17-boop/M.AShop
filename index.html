@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Marketplace MA17 Ultimate + WA</title>
+<title>MA17 Marketplace HP</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 body{margin:0;padding:0;font-family:'Poppins',sans-serif;transition:0.3s;}
 body.dark{background:#111;color:#fff;}
 body.light{background:#f5f5f5;color:#111;}
-h1,h2,h3{color:#f9a825;text-align:center;margin:10px 0;}
+h1,h2,h3{text-align:center;margin:10px 0;}
 input,button,select{padding:8px;margin:5px;border-radius:5px;border:none;outline:none;}
 button{cursor:pointer;}
 .container{display:flex;flex-wrap:wrap;justify-content:center;}
@@ -25,8 +25,8 @@ body.light .card h3{color:#ff9800;}
 .card p{margin:5px;}
 #loginBox,#signupBox,#adminBox,#shopBox,#cartBox{display:none;flex-direction:column;align-items:center;padding:30px;max-width:450px;margin:20px auto;background:#111;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.7);}
 body.light #loginBox, body.light #signupBox, body.light #adminBox, body.light #shopBox, body.light #cartBox{background:#fff;}
-input[type="text"],input[type="password"],input[type="number"],select{width:100%;background:#222;color:#fff;}
-body.light input[type="text"],body.light input[type="password"],body.light input[type="number"],body.light select{background:#eee;color:#111;}
+input[type="text"],input[type="password"],input[type="number"],select,input[type="file"]{width:100%;background:#222;color:#fff;}
+body.light input[type="text"],body.light input[type="password"],body.light input[type="number"],body.light select,input[type="file"]{background:#eee;color:#111;}
 input[type="submit"],button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);color:#fff;font-weight:600;transition:0.3s;}
 input[type="submit"]:hover,button:hover{transform:scale(1.05);}
 #searchInput{width:220px;}
@@ -44,7 +44,6 @@ body.light th{background:#ddd;}
 
 <div id="notification"></div>
 
-<!-- Theme Toggle -->
 <div style="text-align:center;margin:10px;">
 <button id="toggleTheme"><i class="fa-solid fa-moon"></i> Toggle Theme</button>
 </div>
@@ -73,7 +72,7 @@ body.light th{background:#ddd;}
 <p>Halo <span id="adminUser"></span>! <button id="logoutAdmin">Logout</button></p>
 <input type="text" id="namaBarang" placeholder="Nama Barang">
 <input type="number" id="hargaBarang" placeholder="Harga">
-<input type="text" id="fotoBarang" placeholder="URL Foto">
+<input type="file" id="fotoBarang">
 <input type="number" id="diskonBarang" placeholder="Diskon (%)">
 <select id="kategoriBarang"></select>
 <button id="tambahBarang">Tambah Barang</button>
@@ -108,28 +107,21 @@ body.light th{background:#ddd;}
 </div>
 
 <script>
-// ===== Utils =====
+// ===== Data =====
 let users=JSON.parse(localStorage.getItem('users'))||[];
 let barangList=JSON.parse(localStorage.getItem('barangList'))||[];
 let cart=JSON.parse(localStorage.getItem('cart'))||{};
 let currentUser=localStorage.getItem('currentUser');
 const notification=document.getElementById('notification');
-const waNumber="628123456789"; // Ganti dengan nomor WA Vian
+const waNumber="628123456789"; // Ganti nomor WA
 
-// ===== Functions =====
-function showNotification(msg){
-  notification.innerText=msg;
-  notification.style.display='block';
-  setTimeout(()=>{notification.style.display='none';},2000);
-}
+// ===== Utils =====
+function showNotification(msg){notification.innerText=msg;notification.style.display='block';setTimeout(()=>{notification.style.display='none';},2000);}
 function hideAll(){document.getElementById('loginBox').style.display='none';document.getElementById('signupBox').style.display='none';document.getElementById('adminBox').style.display='none';document.getElementById('shopBox').style.display='none';document.getElementById('cartBox').style.display='none';}
 
-// ===== Theme Toggle =====
+// ===== Theme =====
 const bodyTag=document.body;
-document.getElementById('toggleTheme').addEventListener('click',()=>{
-  if(bodyTag.classList.contains('dark')){bodyTag.classList.remove('dark'); bodyTag.classList.add('light');} 
-  else{bodyTag.classList.remove('light'); bodyTag.classList.add('dark');}
-});
+document.getElementById('toggleTheme').addEventListener('click',()=>{bodyTag.classList.toggle('dark');bodyTag.classList.toggle('light');});
 
 // ===== Login / Signup =====
 if(currentUser){showShop(currentUser);}else{document.getElementById('loginBox').style.display='flex';}
@@ -137,12 +129,12 @@ document.getElementById('loginBtn').addEventListener('click',()=>{
   const u=document.getElementById('username').value.trim();
   const p=document.getElementById('password').value.trim();
   const found=users.find(x=>x.username===u && x.password===p);
-  if(u==='admin' && p==='1234'){showAdmin(u);}
+  if(u==='admin' && p==='080517'){showAdmin(u);}
   else if(found){localStorage.setItem('currentUser',u); showShop(u);}
   else{alert('Username/Password salah!');}
 });
-document.getElementById('toSignup').addEventListener('click',()=>{hideAll(); document.getElementById('signupBox').style.display='flex';});
-document.getElementById('toLogin').addEventListener('click',()=>{hideAll(); document.getElementById('loginBox').style.display='flex';});
+document.getElementById('toSignup').addEventListener('click',()=>{hideAll();document.getElementById('signupBox').style.display='flex';});
+document.getElementById('toLogin').addEventListener('click',()=>{hideAll();document.getElementById('loginBox').style.display='flex';});
 document.getElementById('signupBtn').addEventListener('click',()=>{
   const u=document.getElementById('newUsername').value.trim();
   const p=document.getElementById('newPassword').value.trim();
@@ -165,15 +157,28 @@ function showAdmin(user){
   updateKategoriOptions(); loadBarangAdmin();
 }
 document.getElementById('logoutAdmin').addEventListener('click',()=>{localStorage.removeItem('currentUser');hideAll();document.getElementById('loginBox').style.display='flex';});
+
+// ===== Tambah Barang =====
 document.getElementById('tambahBarang').addEventListener('click',()=>{
   const n=document.getElementById('namaBarang').value.trim();
   const h=document.getElementById('hargaBarang').value.trim();
-  const f=document.getElementById('fotoBarang').value.trim();
+  const fInput=document.getElementById('fotoBarang');
   const k=document.getElementById('kategoriBarang').value;
   const d=document.getElementById('diskonBarang').value.trim();
-  if(n && h && f){barangList.push({nama:n,harga:Number(h),foto:f,kategori:k,diskon:Number(d)||0}); localStorage.setItem('barangList',JSON.stringify(barangList)); updateKategoriOptions(); loadBarangAdmin(); renderShop(document.getElementById('searchInput').value);}
+
+  if(!n||!h||!fInput.files.length){alert('Isi semua data dan pilih foto!'); return;}
+
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const imgData=e.target.result;
+    barangList.push({nama:n,harga:Number(h),foto:imgData,kategori:k,diskon:Number(d)||0});
+    localStorage.setItem('barangList',JSON.stringify(barangList));
+    updateKategoriOptions(); loadBarangAdmin(); renderShop(document.getElementById('searchInput').value);
+  };
+  reader.readAsDataURL(fInput.files[0]);
   document.getElementById('namaBarang').value=''; document.getElementById('hargaBarang').value=''; document.getElementById('fotoBarang').value=''; document.getElementById('diskonBarang').value='';
 });
+
 function loadBarangAdmin(){
   const tabel=document.getElementById('tabelBarang'); tabel.innerHTML='';
   barangList.forEach((item,i)=>{
