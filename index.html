@@ -42,16 +42,17 @@ section.active{display:block; opacity:1; transform:translateY(0);}
 .hero{
   position: relative;
   text-align: center;
-  padding: 2rem 1rem; /* padding dikurangi biar teks lebih naik */
+  padding: 1rem 1rem; /* padding atas dikurangi */
   color: white;
   overflow: hidden;
-  min-height: 60vh; /* tinggi hero tetap besar tapi teks lebih atas */
+  min-height: 40vh; /* lebih kecil, biar teks naik */
   display: flex;
   flex-direction: column;
-  justify-content: center; /* biar teks selalu di tengah vertikal */
+  justify-content: flex-start; /* konten nempel ke atas */
+  align-items: center;
 }
-.hero h2{font-size:3rem; margin-bottom:1rem; animation:slideFade 1s ease forwards; text-shadow:0 3px 8px rgba(0,0,0,0.4);}
-.hero p{font-size:1.2rem; margin-bottom:2rem; animation:slideFade 1.5s ease forwards; text-shadow:0 2px 5px rgba(0,0,0,0.3);}
+.hero h2{font-size:3rem; margin:0.5rem 0; animation:slideFade 1s ease forwards; text-shadow:0 3px 8px rgba(0,0,0,0.4);}
+.hero p{font-size:1.2rem; margin:0.5rem 0 1.5rem 0; animation:slideFade 1.5s ease forwards; text-shadow:0 2px 5px rgba(0,0,0,0.3);}
 .hero button{
   padding:1rem 2rem; border:none; border-radius:12px; font-weight:600; cursor:pointer;
   font-size:1.1rem; color:white;
