@@ -3,92 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Animasi Keren</title>
+<title>M.AShop Super Visual</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ===== Body & Font ===== */
 body{
   font-family:'Poppins',sans-serif;
   margin:0; padding:0;
+  overflow-x:hidden;
   background:linear-gradient(135deg,#f9a825,#0d47a1);
   color:#333;
-  overflow-x:hidden;
   transition:0.5s;
 }
-
-/* ===== Header ===== */
+/* Header */
 header{
   display:flex; justify-content:space-between; align-items:center;
-  padding:1rem 2rem;
-  background:rgba(0,0,0,0.2);
-  position:sticky; top:0; z-index:100;
+  padding:1rem 2rem; background:rgba(0,0,0,0.2); position:sticky; top:0; z-index:100;
   backdrop-filter:blur(8px);
 }
 header h1{margin:0; color:white; font-size:1.8rem;}
 nav{display:flex; gap:1rem;}
 nav button{
-  background:#ff9800; color:white; padding:0.5rem 1rem;
-  border:none; border-radius:8px; cursor:pointer; font-weight:600;
-  transition:0.3s;
+  background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);
+  background-size:200% 200%; animation:btnGradient 3s ease infinite;
+  color:white; padding:0.5rem 1rem; border:none; border-radius:8px;
+  cursor:pointer; font-weight:600; transition:0.3s;
 }
-nav button:hover{transform:scale(1.05); background:#ffc107;}
+nav button:hover{transform:scale(1.05);}
 #logoutBtn{display:none; background:#e53935; color:white; padding:0.5rem 1rem; border:none; border-radius:8px; cursor:pointer; transition:0.3s;}
 #logoutBtn:hover{background:#d32f2f; transform:scale(1.05);}
 
-/* ===== Sections ===== */
-section{
-  display:none; padding:2rem;
-  opacity:0; transform:translateY(20px);
-  transition:all 0.6s ease;
-}
+/* Sections */
+section{display:none; padding:2rem; opacity:0; transform:translateY(20px); transition:0.6s;}
 section.active{display:block; opacity:1; transform:translateY(0);}
 
-/* ===== Hero ===== */
-.hero{
-  text-align:center; padding:5rem 1rem;
-  color:white; animation:fadeInSlide 1.2s ease forwards;
+/* Hero */
+.hero{position:relative; text-align:center; padding:6rem 1rem; color:white; overflow:hidden;}
+.hero h2{font-size:3rem; margin-bottom:1rem; animation:slideFade 1s ease forwards;}
+.hero p{font-size:1.2rem; margin-bottom:2rem; animation:slideFade 1.5s ease forwards;}
+.hero button{
+  padding:1rem 2rem; border:none; border-radius:12px; font-weight:600; cursor:pointer;
+  font-size:1.1rem; color:white;
 }
-.hero h2{font-size:2.5rem; margin-bottom:1rem; animation:fadeInText 1.5s forwards;}
-.hero p{font-size:1.2rem; margin-bottom:2rem; animation:fadeInText 2s forwards;}
-.hero button{background:#ff9800; border:none; padding:0.8rem 1.5rem; border-radius:10px; font-weight:600; cursor:pointer; color:white; font-size:1rem; transition:0.3s; animation:fadeInText 2.5s forwards;}
-.hero button:hover{background:#ffc107; transform:scale(1.05);}
+#particles{position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1;}
 
-/* ===== Animations ===== */
-@keyframes fadeInSlide{from{opacity:0; transform:translateY(-50px);} to{opacity:1; transform:translateY(0);}}
-@keyframes fadeInText{from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);}}
-@keyframes zoomHover{0%{transform:scale(1);} 50%{transform:scale(1.05);} 100%{transform:scale(1);}}
+/* Animations */
+@keyframes slideFade{0%{opacity:0; transform:translateY(50px);}100%{opacity:1; transform:translateY(0);}}
+@keyframes btnGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes floatHover{0%{transform:translateY(0) rotateX(0deg);}50%{transform:translateY(-5px) rotateX(5deg);}100%{transform:translateY(0) rotateX(0deg);}}
+@keyframes productAppear{0%{opacity:0; transform:translateY(30px);}100%{opacity:1; transform:translateY(0);}}
 
-/* ===== Forms ===== */
-.container{
-  max-width:400px; margin:2rem auto;
-  background:white; padding:2rem;
-  border-radius:15px; box-shadow:0 8px 30px rgba(0,0,0,0.2);
-  animation:fadeInSlide 0.8s ease forwards;
-}
+/* Forms */
+.container{max-width:400px; margin:2rem auto; background:white; padding:2rem; border-radius:15px; box-shadow:0 8px 30px rgba(0,0,0,0.2); animation:slideFade 0.8s ease forwards;}
 input,button{width:100%; padding:0.7rem; margin:0.5rem 0; border-radius:8px; border:1px solid #ccc;}
-button{background:#0d47a1; color:white; font-weight:600; border:none; cursor:pointer; transition:0.3s;}
-button:hover{background:#1976d2; transform:scale(1.05);}
+button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800); background-size:200% 200%; animation:btnGradient 3s ease infinite; color:white; font-weight:600; border:none; cursor:pointer; transition:0.3s;}
+button:hover{transform:scale(1.05);}
 
-/* ===== Products ===== */
+/* Products */
 .products{display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin-top:2rem;}
 .product{
   background:white; padding:1rem; border-radius:15px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.2); width:220px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.3); width:220px;
   text-align:center; position:relative; overflow:hidden;
-  opacity:0; transform:translateY(30px); transition:0.5s;
+  opacity:0; transform:translateY(30px); animation:productAppear 0.5s forwards;
+  transition:0.5s; transform-style: preserve-3d;
 }
-.product.show{opacity:1; transform:translateY(0);}
-.product img{width:100%; border-radius:12px; transition:0.3s;}
-.product:hover img{transform:scale(1.05);}
+.product img{width:100%; border-radius:12px; transition:0.5s;}
+.product:hover{animation:floatHover 3s infinite; transform:scale(1.05) rotateX(5deg); box-shadow:0 15px 35px rgba(0,0,0,0.5);}
 .product h4{margin:0.5rem 0; color:#0d47a1;}
 .product p{margin:0.3rem 0; font-weight:600; color:#ff5722;}
 .product span{font-size:0.9rem; color:#555;}
 
-/* ===== Modal ===== */
+/* Modal */
 .modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center;}
-.modal-content{background:white; padding:2rem; border-radius:15px; width:90%; max-width:400px; position:relative; animation:fadeInSlide 0.5s;}
+.modal-content{background:white; padding:2rem; border-radius:15px; width:90%; max-width:400px; position:relative; animation:slideFade 0.5s;}
 .closeBtn{position:absolute; top:10px; right:10px; background:#e53935; color:white; border:none; border-radius:50%; width:30px; height:30px; font-weight:bold; cursor:pointer;}
 .closeBtn:hover{background:#d32f2f;}
+
+/* Admin Table */
+table{width:100%; border-collapse:collapse; margin-top:1rem;}
+th,td{border:1px solid #ccc; padding:0.5rem; text-align:center;}
+th{background:#0d47a1; color:white;}
 </style>
 </head>
 <body>
@@ -103,9 +97,10 @@ button:hover{background:#1976d2; transform:scale(1.05);}
 <button id="logoutBtn" onclick="logout()">Logout</button>
 </header>
 
-<!-- ===== Home / Hero ===== -->
+<!-- Hero -->
 <section id="home" class="active">
 <div class="hero">
+<canvas id="particles"></canvas>
 <h2>Selamat Datang di M.AShop!</h2>
 <p>Belanja mudah & cepat. Silahkan daftar sebagai penjual untuk mulai menjual produkmu.</p>
 <button onclick="showSection('register')">Daftar Sekarang</button>
@@ -113,7 +108,7 @@ button:hover{background:#1976d2; transform:scale(1.05);}
 <div class="products" id="previewProducts"></div>
 </section>
 
-<!-- ===== Register ===== -->
+<!-- Register -->
 <section id="register">
 <div class="container">
 <h2>Register Penjual Baru</h2>
@@ -124,7 +119,7 @@ button:hover{background:#1976d2; transform:scale(1.05);}
 </div>
 </section>
 
-<!-- ===== Login ===== -->
+<!-- Login -->
 <section id="login">
 <div class="container">
 <h2>Login</h2>
@@ -135,7 +130,7 @@ button:hover{background:#1976d2; transform:scale(1.05);}
 </div>
 </section>
 
-<!-- ===== Dashboard ===== -->
+<!-- Dashboard Penjual -->
 <section id="dashboard">
 <h2>Halo, <span id="userRole"></span></h2>
 <h3 id="dashboardTitle">Produk Anda</h3>
@@ -143,7 +138,20 @@ button:hover{background:#1976d2; transform:scale(1.05);}
 <button id="addProductBtn">Tambah Produk</button>
 </section>
 
-<!-- ===== Modal Tambah Produk ===== -->
+<!-- Dashboard Admin -->
+<section id="adminDashboard">
+<h2>Dashboard Admin</h2>
+<h3>Penjual Terdaftar</h3>
+<table id="adminUsersTable">
+<tr><th>Username</th><th>Role</th><th>Total Pendapatan (Rp)</th></tr>
+</table>
+<h3>Semua Produk</h3>
+<table id="adminProductsTable">
+<tr><th>Produk</th><th>Harga</th><th>Penjual</th></tr>
+</table>
+</section>
+
+<!-- Modal Tambah Produk -->
 <div class="modal" id="productModal">
 <div class="modal-content">
 <button class="closeBtn" onclick="closeModal()">×</button>
@@ -157,7 +165,7 @@ button:hover{background:#1976d2; transform:scale(1.05);}
 
 <script>
 // ===== LocalStorage Init =====
-if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([{username:'admin',password:'admin123',role:'Admin'}]));
+if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([{username:'admin',password:'MAlfian17xx',role:'Admin'}]));
 if(!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
 function getUsers(){ return JSON.parse(localStorage.getItem('users')); }
 function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
@@ -171,8 +179,10 @@ function showSection(id){
 sections.forEach(sec=>sec.classList.remove('active'));
 document.getElementById(id).classList.add('active');
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
-if(user){ logoutBtn.style.display='inline-block'; if(id==='login'||id==='register') showSection('dashboard'); }
-else logoutBtn.style.display='none';
+if(user){ logoutBtn.style.display='inline-block';
+if(user.role==='Admin') showAdmin(); 
+else if(id==='login'||id==='register') showSection('dashboard'); 
+} else logoutBtn.style.display='none';
 renderProducts();
 }
 
@@ -219,7 +229,7 @@ const username=document.getElementById('username').value.trim();
 const password=document.getElementById('password').value.trim();
 const loginError=document.getElementById('loginError');
 const user=getUsers().find(u=>u.username===username && u.password===password);
-if(user){ localStorage.setItem('loggedInUser',JSON.stringify(user)); showSection('dashboard'); }
+if(user){ localStorage.setItem('loggedInUser',JSON.stringify(user)); showSection(user.role==='Admin'?'adminDashboard':'dashboard'); }
 else loginError.textContent='Username atau Password salah!';
 });
 
@@ -248,10 +258,55 @@ document.getElementById('prodName').value='';document.getElementById('prodPrice'
 reader.readAsDataURL(imageFile);
 });
 
+// ===== Admin View =====
+function showAdmin(){
+const users=getUsers();
+const products=getProducts();
+// Penjual Table
+const userTable=document.getElementById('adminUsersTable');
+userTable.innerHTML='<tr><th>Username</th><th>Role</th><th>Total Pendapatan (Rp)</th></tr>';
+users.forEach(u=>{
+if(u.role==='Penjual'){
+let total=products.filter(p=>p.owner===u.username).reduce((acc,p)=>acc+Number(p.price),0);
+let row=userTable.insertRow();
+row.insertCell(0).textContent=u.username;
+row.insertCell(1).textContent=u.role;
+row.insertCell(2).textContent=total.toLocaleString();
+}
+});
+// Produk Table
+const prodTable=document.getElementById('adminProductsTable');
+prodTable.innerHTML='<tr><th>Produk</th><th>Harga</th><th>Penjual</th></tr>';
+products.forEach(p=>{
+let row=prodTable.insertRow();
+row.insertCell(0).textContent=p.name;
+row.insertCell(1).textContent=Number(p.price).toLocaleString();
+row.insertCell(2).textContent=p.owner;
+});
+}
+
 // ===== Load Login =====
 const loggedUser=JSON.parse(localStorage.getItem('loggedInUser'));
-if(loggedUser) showSection('dashboard');
+if(loggedUser) showSection(loggedUser.role==='Admin'?'adminDashboard':'dashboard');
 renderProducts();
+
+// ===== Particle Animation =====
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+let particles=[];
+for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,speed:Math.random()*0.5+0.2});}
+function animateParticles(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+particles.forEach(p=>{
+ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.fill();
+p.y-=p.speed; if(p.y<0)p.y=canvas.height; if(p.x>canvas.width)p.x=0;
+});
+requestAnimationFrame(animateParticles);
+}
+animateParticles();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 </script>
+
 </body>
 </html>
