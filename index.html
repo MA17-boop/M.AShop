@@ -3,46 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Final</title>
+<title>M.AShop Stylish</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ===== Umum ===== */
-body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
-header{background:#0077ff;color:white;padding:1rem;display:flex;justify-content:space-between;align-items:center;}
-header button{background:white;color:#0077ff;padding:0.5rem 1rem;border:none;border-radius:5px;cursor:pointer;transition: transform 0.3s;}
-header button:hover{transform:scale(1.1);}
+/* ===== Global ===== */
+body{font-family:'Poppins',sans-serif;margin:0;padding:0;background:#f4f6f8;color:#333;}
+header{background:#0d47a1;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+header button{background:#ff9800;color:white;padding:0.5rem 1rem;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;}
+header button:hover{transform:scale(1.05);}
 section{display:none;padding:2rem;}
-section.active{display:block;animation:fadeIn 1s ease;}
+section.active{display:block;animation:fadeIn 0.8s ease;}
 h2,h3{margin-top:0;}
-
-/* ===== Hero ===== */
 .hero{text-align:center;padding:3rem 1rem;}
 .hero img{width:150px;animation:bounce 2s infinite;}
-
-/* ===== Products ===== */
-.products{display:flex;justify-content:center;gap:1rem;padding:2rem;flex-wrap:wrap;}
-.product{background:white;padding:1rem;border-radius:10px;transition:transform 0.3s,box-shadow 0.3s;cursor:pointer;width:120px;text-align:center;position:relative;}
-.product:hover{transform:translateY(-10px);box-shadow:0 10px 20px rgba(0,0,0,0.2);}
-.product button{display:none;position:absolute;top:5px;right:5px;background:red;color:white;border:none;padding:2px 5px;border-radius:3px;cursor:pointer;}
+.products{display:flex;flex-wrap:wrap;gap:1rem;padding:2rem;justify-content:center;}
+.product{background:white;padding:1rem;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);transition:transform 0.3s,box-shadow 0.3s;width:160px;text-align:center;position:relative;}
+.product:hover{transform:translateY(-8px);box-shadow:0 10px 20px rgba(0,0,0,0.15);}
+.product button{display:none;position:absolute;top:5px;right:5px;background:#e53935;color:white;border:none;padding:4px 6px;border-radius:5px;cursor:pointer;}
 .product:hover button{display:block;}
-
-/* ===== Login ===== */
-.login-container{max-width:300px;margin:50px auto;background:white;padding:2rem;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.2);}
-.login-container input,.login-container button{width:100%;padding:0.5rem;margin:0.5rem 0;}
-.error{color:red;font-size:0.9rem;}
-
-/* ===== Dashboard ===== */
-#dashboard .product-table{margin-top:1rem;}
-#addProduct{margin-top:1rem;padding:0.5rem 1rem;background:#0077ff;color:white;border:none;border-radius:5px;cursor:pointer;}
-#addProduct:hover{background:#005bb5;}
-table{width:100%;border-collapse:collapse;margin-top:1rem;}
-th,td{border:1px solid #ddd;padding:0.5rem;text-align:center;}
-th{background:#0077ff;color:white;}
-
-/* ===== Animasi ===== */
+.login-container{max-width:350px;margin:50px auto;background:white;padding:2rem;border-radius:15px;box-shadow:0 5px 25px rgba(0,0,0,0.1);}
+.login-container input,.login-container button{width:100%;padding:0.6rem;margin:0.5rem 0;border-radius:8px;border:1px solid #ccc;}
+.login-container button{background:#0d47a1;color:white;font-weight:600;border:none;cursor:pointer;transition:0.3s;}
+.login-container button:hover{background:#0b3d91;}
+.error{color:#e53935;font-size:0.9rem;}
+#addProduct{margin-top:1rem;padding:0.6rem 1.2rem;background:#ff9800;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:0.3s;}
+#addProduct:hover{background:#fb8c00;}
 @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-
-/* ===== Responsif ===== */
+table{width:100%;border-collapse:collapse;margin-top:1rem;background:white;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+th,td{border:1px solid #ddd;padding:0.6rem;text-align:center;}
+th{background:#0d47a1;color:white;}
 @media(max-width:600px){.products{flex-direction:column;align-items:center;}}
 </style>
 </head>
@@ -53,12 +43,11 @@ th{background:#0077ff;color:white;}
 <div id="navBtns">
 <button onclick="showSection('home')">Home</button>
 <button onclick="showSection('login')">Login</button>
-<button onclick="showSection('products')">Produk</button>
 </div>
 <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
 </header>
 
-<!-- ===== Home ===== -->
+<!-- Home -->
 <section id="home" class="active">
 <div class="hero">
 <h2>Selamat Datang di M.AShop!</h2>
@@ -71,7 +60,7 @@ th{background:#0077ff;color:white;}
 </div>
 </section>
 
-<!-- ===== Login ===== -->
+<!-- Login -->
 <section id="login">
 <div class="login-container">
 <h2>Login</h2>
@@ -84,70 +73,81 @@ th{background:#0077ff;color:white;}
 </div>
 </section>
 
-<!-- ===== Products ===== -->
-<section id="products">
-<h2>Daftar Produk</h2>
-<div class="products" id="allProducts"></div>
-</section>
-
-<!-- ===== Dashboard ===== -->
+<!-- Dashboard -->
 <section id="dashboard">
-<h2>Selamat Datang, <span id="userRole"></span></h2>
-<h3>Produk Anda</h3>
+<h2>Halo, <span id="userRole"></span></h2>
+<h3 id="dashboardTitle"></h3>
 <div class="products" id="userProducts"></div>
-<button id="addProduct">Tambah Produk</button>
+<button id="addProduct" style="display:none;">Tambah Produk</button>
+<div id="adminStats" style="margin-top:1rem;"></div>
 </section>
 
 <script>
-// ===== Dummy Users =====
+// Users
 const users = [
-{username:'admin',password:'Alfian17',role:'Admin'},
-{username:'seller',password:'seller123',role:'Penjual'}
+{username:'admin',password:'MAlfian17',role:'Admin'},
+{username:'PenjualA',password:'passA',role:'Penjual'},
+{username:'PenjualB',password:'passB',role:'Penjual'},
+{username:'PenjualC',password:'passC',role:'Penjual'}
 ];
 
-// ===== Dummy Produk =====
-let products = [
-{name:'Produk 1',price:'Rp50.000',owner:'seller'},
-{name:'Produk 2',price:'Rp75.000',owner:'seller'},
-{name:'Produk A',price:'Rp60.000',owner:'admin'},
-{name:'Produk B',price:'Rp80.000',owner:'admin'}
-];
+// Produk
+let products = [];
 
-// ===== Navigasi =====
+// Navigation
 const sections = document.querySelectorAll('section');
 const logoutBtn = document.getElementById('logoutBtn');
+
 function showSection(id){
 sections.forEach(sec=>sec.classList.remove('active'));
 document.getElementById(id).classList.add('active');
-const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-if(loggedUser){ logoutBtn.style.display='inline-block'; if(id==='login') showSection('dashboard'); }
+const user = JSON.parse(localStorage.getItem('loggedInUser'));
+if(user){ logoutBtn.style.display='inline-block'; if(id==='login') showSection('dashboard'); }
 else logoutBtn.style.display='none';
 renderProducts();
 }
 
-// ===== Render Produk =====
+// Render Products
 function renderProducts(){
 const preview = document.getElementById('previewProducts');
-const allP = document.getElementById('allProducts');
 const userP = document.getElementById('userProducts');
-preview.innerHTML=''; allP.innerHTML=''; userP.innerHTML='';
+const adminStats = document.getElementById('adminStats');
+preview.innerHTML=''; userP.innerHTML=''; adminStats.innerHTML='';
 products.forEach((p,i)=>{
-// Preview
-const div1=document.createElement('div'); div1.className='product'; div1.textContent=p.name; preview.appendChild(div1);
-// All Products
-const div2=document.createElement('div'); div2.className='product'; div2.textContent=p.name+' | '+p.price; allP.appendChild(div2);
-// User Products
+const divHome = document.createElement('div'); divHome.className='product'; divHome.textContent=(i+1)+'. '+p.name+' ('+p.owner+')'; preview.appendChild(divHome);
+});
+
+// Dashboard
 const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-if(loggedUser && (loggedUser.role==='Admin' || p.owner===loggedUser.username)){
-const div3=document.createElement('div'); div3.className='product'; div3.textContent=p.name+' | '+p.price;
+if(!loggedUser) return;
+document.getElementById('userRole').textContent = loggedUser.username;
+if(loggedUser.role==='Penjual'){
+document.getElementById('dashboardTitle').textContent='Produk Anda';
+document.getElementById('addProduct').style.display='inline-block';
+products.forEach((p,i)=>{
+if(p.owner===loggedUser.username){
+const div = document.createElement('div'); div.className='product'; div.textContent=p.name+' | '+p.price;
 const btn = document.createElement('button'); btn.textContent='Hapus'; btn.onclick=()=>{products.splice(i,1); renderProducts();}
-div3.appendChild(btn);
-userP.appendChild(div3);
+div.appendChild(btn);
+userP.appendChild(div);
 }
 });
+}else if(loggedUser.role==='Admin'){
+document.getElementById('dashboardTitle').textContent='Data Pendapatan Penjual (Tips)';
+document.getElementById('addProduct').style.display='none';
+let statsHTML='<table><tr><th>Penjual</th><th>Jumlah Produk</th><th>Estimasi Tips</th></tr>';
+const penjualList = users.filter(u=>u.role==='Penjual');
+penjualList.forEach(pj=>{
+const count = products.filter(pr=>pr.owner===pj.username).length;
+const tips = count * 5000;
+statsHTML+='<tr><td>'+pj.username+'</td><td>'+count+'</td><td>Rp'+tips.toLocaleString()+'</td></tr>';
+});
+statsHTML+='</table>';
+adminStats.innerHTML=statsHTML;
+}
 }
 
-// ===== Login =====
+// Login
 const loginForm=document.getElementById('loginForm');
 if(loginForm){
 loginForm.addEventListener('submit',function(e){
@@ -158,28 +158,27 @@ const errorEl=document.getElementById('error');
 const user=users.find(u=>u.username===username && u.password===password);
 if(user){
 localStorage.setItem('loggedInUser',JSON.stringify(user));
-document.getElementById('userRole').textContent=user.role;
 showSection('dashboard');
 } else { errorEl.textContent='Username atau Password salah!'; }
 });
 }
 
-// ===== Logout =====
+// Logout
 function logout(){ localStorage.removeItem('loggedInUser'); showSection('home'); }
 
-// ===== Tambah Produk =====
+// Tambah Produk Penjual
 document.getElementById('addProduct').addEventListener('click',function(){
 const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-if(!loggedUser) return alert('Login dulu!');
+if(!loggedUser || loggedUser.role!=='Penjual') return alert('Login Penjual dulu!');
 const name = prompt('Nama Produk:'); if(!name) return;
 const price = prompt('Harga Produk:'); if(!price) return;
 products.push({name,price,owner:loggedUser.username});
 renderProducts();
 });
 
-// ===== Check Login on Load =====
+// Cek login on load
 const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-if(loggedUser){ document.getElementById('userRole').textContent = loggedUser.role; logoutBtn.style.display='inline-block'; }
+if(loggedUser) showSection('dashboard');
 
 renderProducts();
 </script>
