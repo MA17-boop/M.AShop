@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Super Visual Mod</title>
+<title>M.AShop Super Visual Full</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body{
@@ -14,19 +14,21 @@ body{
   color:#333;
   transition:0.5s;
 }
+
 /* Header */
 header{
   display:flex; justify-content:space-between; align-items:center;
   padding:1rem 2rem; background:rgba(0,0,0,0.2); position:sticky; top:0; z-index:100;
   backdrop-filter:blur(8px);
 }
-header h1{margin:0; color:white; font-size:1.8rem;}
+header h1{margin:0; color:white; font-size:1.8rem; text-shadow:0 2px 5px rgba(0,0,0,0.4);}
 nav{display:flex; gap:1rem;}
 nav button{
   background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800);
   background-size:200% 200%; animation:btnGradient 3s ease infinite;
   color:white; padding:0.5rem 1rem; border:none; border-radius:8px;
   cursor:pointer; font-weight:600; transition:0.3s;
+  box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
 nav button:hover{transform:scale(1.05);}
 #logoutBtn{display:none; background:#e53935; color:white; padding:0.5rem 1rem; border:none; border-radius:8px; cursor:pointer; transition:0.3s;}
@@ -38,11 +40,12 @@ section.active{display:block; opacity:1; transform:translateY(0);}
 
 /* Hero */
 .hero{position:relative; text-align:center; padding:6rem 1rem; color:white; overflow:hidden;}
-.hero h2{font-size:3rem; margin-bottom:1rem; animation:slideFade 1s ease forwards;}
-.hero p{font-size:1.2rem; margin-bottom:2rem; animation:slideFade 1.5s ease forwards;}
+.hero h2{font-size:3rem; margin-bottom:1rem; animation:slideFade 1s ease forwards; text-shadow:0 3px 8px rgba(0,0,0,0.4);}
+.hero p{font-size:1.2rem; margin-bottom:2rem; animation:slideFade 1.5s ease forwards; text-shadow:0 2px 5px rgba(0,0,0,0.3);}
 .hero button{
   padding:1rem 2rem; border:none; border-radius:12px; font-weight:600; cursor:pointer;
   font-size:1.1rem; color:white;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
 }
 #particles{position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1;}
 
@@ -52,7 +55,7 @@ section.active{display:block; opacity:1; transform:translateY(0);}
 @keyframes floatHover{0%{transform:translateY(0) rotateX(0deg);}50%{transform:translateY(-5px) rotateX(5deg);}100%{transform:translateY(0) rotateX(0deg);}}
 
 /* Forms */
-.container{max-width:400px; margin:2rem auto; background:white; padding:2rem; border-radius:15px; box-shadow:0 8px 30px rgba(0,0,0,0.2); animation:slideFade 0.8s ease forwards;}
+.container{max-width:400px; margin:2rem auto; background:white; padding:2rem; border-radius:15px; box-shadow:0 8px 30px rgba(0,0,0,0.3); animation:slideFade 0.8s ease forwards;}
 input,button{width:100%; padding:0.7rem; margin:0.5rem 0; border-radius:8px; border:1px solid #ccc;}
 button{background:linear-gradient(90deg,#ff9800,#ffc107,#ff9800); background-size:200% 200%; animation:btnGradient 3s ease infinite; color:white; font-weight:600; border:none; cursor:pointer; transition:0.3s;}
 button:hover{transform:scale(1.05);}
@@ -70,7 +73,7 @@ button:hover{transform:scale(1.05);}
 .product h4{margin:0.5rem 0; color:#0d47a1;}
 .product p{margin:0.3rem 0; font-weight:600; color:#ff5722;}
 .product span{font-size:0.9rem; color:#555;}
-.product button{margin-top:0.3rem; font-size:0.9rem;}
+.product button{margin-top:0.3rem; font-size:0.9rem; cursor:pointer;}
 
 /* Modal */
 .modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center;}
@@ -139,13 +142,12 @@ button:hover{transform:scale(1.05);}
 </div>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
 <script>
-// ===== Firebase Config =====
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAqPWxMcBFj6-t_fUJx0AmJFryvrozLHNo",
   authDomain: "ma17shop.firebaseapp.com",
@@ -158,10 +160,10 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-// ===== Navigation =====
+let currentUser = null;
 const sections = document.querySelectorAll('section');
 const logoutBtn = document.getElementById('logoutBtn');
-let currentUser = null;
+
 function showSection(id){
 sections.forEach(s=>s.classList.remove('active'));
 document.getElementById(id).classList.add('active');
@@ -169,9 +171,10 @@ logoutBtn.style.display=currentUser?'inline-block':'none';
 if(currentUser) document.getElementById('userRole').textContent=currentUser.username;
 renderProducts();
 }
-function logout(){ currentUser=null; showSection('home');}
 
-// ===== Register =====
+function logout(){ currentUser=null; showSection('home'); }
+
+// Register
 document.getElementById('registerBtn').addEventListener('click', async ()=>{
 const username=document.getElementById('regUsername').value.trim();
 const wa=document.getElementById('regWA').value.trim();
@@ -184,7 +187,7 @@ await db.collection('users').add({username,wa,password});
 alert('Akun berhasil dibuat! Silahkan login.'); showSection('login');
 });
 
-// ===== Login =====
+// Login
 document.getElementById('loginBtn').addEventListener('click', async ()=>{
 const wa=document.getElementById('loginWA').value.trim();
 const password=document.getElementById('loginPassword').value.trim();
@@ -195,7 +198,7 @@ showSection('dashboard');
 }else document.getElementById('loginError').textContent='Nomor WA atau Password salah!';
 });
 
-// ===== Render Products =====
+// Render Products
 async function renderProducts(){
 const preview=document.getElementById('previewProducts');
 const userP=document.getElementById('userProducts');
@@ -212,12 +215,12 @@ if(currentUser && p.username===currentUser.username) userP.appendChild(div.clone
 });
 }
 
-// ===== Modal Product =====
+// Modal Product
 const modal=document.getElementById('productModal');
 document.getElementById('addProductBtn').addEventListener('click',()=>{modal.style.display='flex';});
 function closeModal(){modal.style.display='none';}
 
-// ===== Save Product =====
+// Save Product
 document.getElementById('saveProductBtn').addEventListener('click', async ()=>{
 const name=document.getElementById('prodName').value.trim();
 const price=document.getElementById('prodPrice').value.trim();
@@ -235,17 +238,15 @@ renderProducts(); closeModal();
 document.getElementById('prodName').value=''; document.getElementById('prodPrice').value=''; document.getElementById('prodImage').value='';
 });
 
-// ===== Delete Product =====
+// Delete Product
 async function deleteProduct(id){ if(confirm('Yakin hapus produk ini?')){ await db.collection('products').doc(id).delete(); renderProducts(); } }
 
-showSection('home');
-
-// ===== Particle Animation =====
+// Particle Animation
 const canvas=document.getElementById('particles');
 const ctx=canvas.getContext('2d');
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 let particles=[];
-for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,speed:Math.random()*0.5+0.2});}
+for(let i=0;i<150;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,speed:Math.random()*0.5+0.2});}
 function animateParticles(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 particles.forEach(p=>{
@@ -256,6 +257,8 @@ requestAnimationFrame(animateParticles);
 }
 animateParticles();
 window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+
+showSection('home');
 </script>
 
 </body>
