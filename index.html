@@ -77,7 +77,6 @@ th{background:#222;}
 <h2>Toko MA17</h2>
 <p>Halo <span id="shopUser"></span>! 
 <button id="logoutShop">Logout</button> 
-<button id="openCart">Keranjang (<span id="cartCount">0</span>)</button>
 </p>
 <select id="filterKategori"><option value="">Semua Kategori</option></select>
 <select id="sortHarga"><option value="">Urutkan Harga</option><option value="asc">Termurah</option><option value="desc">Termahal</option></select>
@@ -85,27 +84,16 @@ th{background:#222;}
 <div class="container" id="barangContainer"></div>
 </div>
 
-<!-- Cart -->
-<div id="cartBox">
-<h2>Keranjang</h2>
-<div id="cartItems"></div>
-<h3>Total: Rp<span id="cartTotal">0</span></h3>
-<button id="checkoutBtn">Checkout</button>
-<button id="waCheckoutBtn">Pesan via WhatsApp</button>
-<button id="closeCart">Tutup</button>
-</div>
-
 <script>
 // ===== Data =====
 let users=JSON.parse(localStorage.getItem('users'))||[];
 let barangList=JSON.parse(localStorage.getItem('barangList'))||[];
-let cart=JSON.parse(localStorage.getItem('cart'))||{};
 let currentUser=localStorage.getItem('currentUser');
 const notification=document.getElementById('notification');
 
 // ===== Utils =====
 function showNotification(msg){notification.innerText=msg;notification.style.display='block';setTimeout(()=>{notification.style.display='none';},2000);}
-function hideAll(){document.getElementById('loginBox').style.display='none';document.getElementById('signupBox').style.display='none';document.getElementById('adminBox').style.display='none';document.getElementById('shopBox').style.display='none';document.getElementById('cartBox').style.display='none';}
+function hideAll(){document.getElementById('loginBox').style.display='none';document.getElementById('signupBox').style.display='none';document.getElementById('adminBox').style.display='none';document.getElementById('shopBox').style.display='none';}
 
 // ===== Welcome Animation =====
 const banner=document.getElementById('welcomeBanner');
@@ -164,7 +152,10 @@ document.getElementById('tambahBarang').addEventListener('click',()=>{
   const alamat=document.getElementById('alamatPenjual').value.trim();
   if(!n||!h||!fInput.files.length||!wa||!alamat){alert('Isi semua data dan pilih foto!'); return;}
   const file=fInput.files[0]; if(file.size>10*1024*1024){alert('Ukuran gambar maksimal 10MB!'); return;}
-  let waFinal = wa.startsWith("0") ? "62"+wa.slice(1) : wa;
+  // Format nomor WA otomatis
+  let waFinal = wa;
+  if(waFinal.startsWith("0")) waFinal = "62" + waFinal.slice(1);
+  if(waFinal.startsWith("+62")) waFinal = "62" + waFinal.slice(3);
   const reader=new FileReader();
   reader.onload=function(e){
     const imgData=e.target.result;
