@@ -13,37 +13,28 @@ body {margin:0;font-family:Arial;background:#f5f5f5;}
   color:white;display:flex;flex-direction:column;
   justify-content:center;align-items:center;text-align:center;
 }
+button {cursor:pointer}
 
+/* NAV */
 .navbar {background:#ff5722;color:white;padding:15px;display:flex;justify-content:space-between;}
 .menu {display:flex;justify-content:space-around;background:white;padding:10px;}
-.menu button {border:none;background:none;font-weight:bold;}
+.menu button {border:none;background:none;font-weight:bold}
 
+/* GRID */
 .grid {display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}
 .card {background:white;border-radius:15px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
-.card img {width:100%;}
-.info {padding:10px;}
-.harga {color:#ff5722;font-weight:bold;}
-.buy {background:#ff5722;color:white;border:none;width:100%;padding:10px;margin-top:5px;}
+.card img {width:100%}
+.info {padding:10px}
+.harga {color:#ff5722;font-weight:bold}
+.buy {background:#ff5722;color:white;border:none;width:100%;padding:10px}
 
-input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none;}
-
-#notif {
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%);
-background:#22c55e;
-color:white;
-padding:10px 20px;
-border-radius:10px;
-display:none;
-z-index:999;
-}
+input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none}
 </style>
 </head>
 
 <body>
 
+<!-- LANDING -->
 <div id="landing">
   <h1>🛒 Toko M.A17 Marketplace</h1>
   <p>Platform jualan & dropship modern 🔥</p>
@@ -65,14 +56,18 @@ z-index:999;
   <button onclick="show('sellerLogin')">Penjual</button>
 </div>
 
+<!-- HOME -->
 <div id="home"><div class="grid" id="homeList"></div></div>
+
+<!-- PRODUK -->
 <div id="produk" style="display:none;"><div class="grid" id="produkList"></div></div>
 
+<!-- CART -->
 <div id="cart" style="display:none;padding:10px;">
   <h2>Keranjang</h2>
   <div id="cartList"></div>
-  <h3 id="totalText"></h3>
-  <h4 id="profitText"></h4>
+  <h3 id="total"></h3>
+  <h4 id="profit"></h4>
 
   <input id="namaPembeli" placeholder="Nama">
   <textarea id="alamat" placeholder="Alamat"></textarea>
@@ -80,6 +75,7 @@ z-index:999;
   <button onclick="checkout()" class="buy">Checkout</button>
 </div>
 
+<!-- ADMIN -->
 <div id="admin" style="display:none;padding:10px;">
   <h2>Admin Login</h2>
   <input id="adminPass" type="password">
@@ -91,12 +87,14 @@ z-index:999;
   </div>
 </div>
 
+<!-- SELLER LOGIN -->
 <div id="sellerLogin" style="display:none;padding:10px;">
   <h2>Login Penjual</h2>
-  <input id="sellerWA" placeholder="Nomor WA (628...)">
+  <input id="sellerWA" placeholder="Nomor WA">
   <button onclick="loginSeller()">Masuk</button>
 </div>
 
+<!-- SELLER PANEL -->
 <div id="sellerPanel" style="display:none;padding:10px;">
   <h2>Panel Penjual</h2>
 
@@ -111,27 +109,14 @@ z-index:999;
 
 </div>
 
-<div id="notif"></div>
-
 <script>
 let data = JSON.parse(localStorage.getItem("produk")) || [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let totalProfit = parseInt(localStorage.getItem("profit")) || 0;
 let currentSeller = "";
 
-/* NOTIF */
-function notif(text){
-  let n = document.getElementById("notif");
-  n.innerText = text;
-  n.style.display="block";
-  setTimeout(()=>{n.style.display="none"},2000);
-}
-
 /* MASUK */
-function masuk(){
-  landing.style.display="none";
-  main.style.display="block";
-}
+function masuk(){landing.style.display="none";main.style.display="block";}
 
 /* NAV */
 function show(p){
@@ -146,29 +131,21 @@ function show(p){
 function loginAdmin(){
   if(adminPass.value==="admin123"){
     adminPanel.style.display="block";
-    totalProfit.innerText="Rp "+totalProfit;
-  } else notif("Password salah");
+    document.getElementById("totalProfit").innerText="Rp "+totalProfit;
+  }
 }
 
 /* LOGIN SELLER */
 function loginSeller(){
-  if(!sellerWA.value){notif("Isi nomor WA");return;}
   currentSeller = sellerWA.value;
   sellerPanel.style.display="block";
-  notif("Login berhasil");
 }
 
 /* TAMBAH PRODUK */
 function tambahProduk(){
-  if(!nama.value || !harga.value || !komisi.value || !deskripsi.value){
-    notif("Isi semua data!");
-    return;
-  }
-
   let file = gambar.files[0];
-  if(!file){notif("Pilih gambar");return;}
-
   let reader = new FileReader();
+
   reader.onload = function(){
     data.push({
       nama:nama.value,
@@ -179,10 +156,10 @@ function tambahProduk(){
       gambar:reader.result
     });
     localStorage.setItem("produk", JSON.stringify(data));
-    notif("Produk ditambahkan");
+    alert("Produk ditambahkan");
     tampil();
   }
-  reader.readAsDataURL(file);
+  if(file) reader.readAsDataURL(file);
 }
 
 /* TAMPIL */
@@ -205,7 +182,6 @@ function tampil(){
       </div>
       <button class="buy" onclick="addCart(${i})">Beli</button>
       <button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>
-      <button class="buy" onclick="hapus(${i})">Hapus</button>
     </div>`;
     home.innerHTML+=html;
     produk.innerHTML+=html;
@@ -217,23 +193,16 @@ function chat(wa,nama){
   window.open("https://wa.me/"+wa+"?text=Halo saya tertarik dengan "+nama);
 }
 
-/* HAPUS */
-function hapus(i){
-  data.splice(i,1);
-  localStorage.setItem("produk", JSON.stringify(data));
-  notif("Produk dihapus");
-  tampil();
-}
-
 /* CART */
 function addCart(i){
   cart.push(data[i]);
   localStorage.setItem("cart", JSON.stringify(cart));
-  notif("Masuk keranjang");
+  alert("Masuk keranjang");
 }
 
 function tampilCart(){
-  let total=0, profit=0, list="";
+  let total=0, profit=0;
+  let list="";
   cart.forEach(p=>{
     let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
     total+=hargaJual;
@@ -241,16 +210,14 @@ function tampilCart(){
     list+=p.nama+" - Rp "+hargaJual+"<br>";
   });
   cartList.innerHTML=list;
-  totalText.innerText="Total: Rp "+total;
-  profitText.innerText="Keuntungan kamu: Rp "+profit;
+  total.innerText="Total: Rp "+total;
+  profit.innerText="Keuntungan kamu: Rp "+profit;
 }
 
 /* CHECKOUT */
 function checkout(){
-  let namaPembeli=document.getElementById("namaPembeli").value;
-  let alamat=document.getElementById("alamat").value;
-
-  if(!namaPembeli || !alamat){notif("Isi data dulu!");return;}
+  let namaPembeli = document.getElementById("namaPembeli").value;
+  let alamat = document.getElementById("alamat").value;
 
   let group={};
 
@@ -260,13 +227,12 @@ function checkout(){
   });
 
   for(let wa in group){
-    let pesan="🛒 *PESANAN BARU*%0A";
-    pesan+="Nama: "+namaPembeli+"%0AAlamat: "+alamat+"%0A%0A";
-
+    let pesan="Pesanan%0A"+namaPembeli+"%0A"+alamat+"%0A";
     let profit=0;
-    group[wa].forEach((p,i)=>{
+
+    group[wa].forEach(p=>{
       let hargaJual=parseInt(p.harga)+parseInt(p.komisi||0);
-      pesan+=(i+1)+". "+p.nama+" Rp"+hargaJual+"%0A";
+      pesan+=p.nama+" Rp"+hargaJual+"%0A";
       profit+=parseInt(p.komisi||0);
     });
 
@@ -275,12 +241,9 @@ function checkout(){
   }
 
   localStorage.setItem("profit", totalProfit);
-
   cart=[];
   localStorage.setItem("cart", JSON.stringify(cart));
   tampilCart();
-
-  notif("Pesanan dikirim!");
 }
 
 /* SEARCH */
