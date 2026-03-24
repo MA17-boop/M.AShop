@@ -3,43 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Final App</title>
+<title>M.AShop Register Penjual</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body{font-family:'Poppins',sans-serif;margin:0;padding:0;background:#f4f6f8;color:#333;}
-header{background:#0d47a1;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+header{background:#0d47a1;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;}
 header button{background:#ff9800;color:white;padding:0.5rem 1rem;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;}
 header button:hover{transform:scale(1.05);}
 section{display:none;padding:2rem;}
-section.active{display:block;animation:fadeIn 0.8s ease;}
-h2,h3{margin-top:0;}
-.hero{text-align:center;padding:3rem 1rem;}
-.hero img{width:150px;animation:bounce 2s infinite;}
-.products{display:flex;flex-wrap:wrap;gap:1rem;padding:2rem;justify-content:center;}
-.product{background:white;padding:1rem;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);transition:transform 0.3s,box-shadow 0.3s;width:160px;text-align:center;position:relative;}
-.product:hover{transform:translateY(-8px);box-shadow:0 10px 20px rgba(0,0,0,0.15);}
-.product button{display:none;position:absolute;top:5px;right:5px;background:#e53935;color:white;border:none;padding:4px 6px;border-radius:5px;cursor:pointer;}
-.product:hover button{display:block;}
+section.active{display:block;}
 .login-container{max-width:350px;margin:50px auto;background:white;padding:2rem;border-radius:15px;box-shadow:0 5px 25px rgba(0,0,0,0.1);}
 .login-container input,.login-container button{width:100%;padding:0.6rem;margin:0.5rem 0;border-radius:8px;border:1px solid #ccc;}
 .login-container button{background:#0d47a1;color:white;font-weight:600;border:none;cursor:pointer;transition:0.3s;}
 .login-container button:hover{background:#0b3d91;}
 .error{color:#e53935;font-size:0.9rem;}
-#addProduct{margin-top:1rem;padding:0.6rem 1.2rem;background:#ff9800;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:0.3s;}
+.products{display:flex;flex-wrap:wrap;gap:1rem;padding:2rem;justify-content:center;}
+.product{background:white;padding:1rem;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);width:160px;text-align:center;position:relative;}
+.product button{display:none;position:absolute;top:5px;right:5px;background:#e53935;color:white;border:none;padding:4px 6px;border-radius:5px;cursor:pointer;}
+.product:hover button{display:block;}
+#addProduct{margin-top:1rem;padding:0.6rem 1.2rem;background:#ff9800;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;}
 #addProduct:hover{background:#fb8c00;}
-@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-table{width:100%;border-collapse:collapse;margin-top:1rem;background:white;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+table{width:100%;border-collapse:collapse;margin-top:1rem;}
 th,td{border:1px solid #ddd;padding:0.6rem;text-align:center;}
 th{background:#0d47a1;color:white;}
-@media(max-width:600px){.products{flex-direction:column;align-items:center;}}
 </style>
 </head>
 <body>
 
 <header>
 <h1>M.AShop</h1>
-<div id="navBtns">
+<div>
 <button onclick="showSection('home')">Home</button>
 <button onclick="showSection('login')">Login</button>
 <button onclick="showSection('register')">Register</button>
@@ -49,15 +42,8 @@ th{background:#0d47a1;color:white;}
 
 <!-- Home -->
 <section id="home" class="active">
-<div class="hero">
-<h2>Selamat Datang di M.AShop!</h2>
-<p>Belanja mudah & cepat, semua ada di sini.</p>
-<img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Keranjang">
-</div>
-<div class="products-preview">
-<h3>Produk Terbaru</h3>
+<h2>Halaman Utama</h2>
 <div class="products" id="previewProducts"></div>
-</div>
 </section>
 
 <!-- Register -->
@@ -96,13 +82,13 @@ th{background:#0d47a1;color:white;}
 </section>
 
 <script>
-// ===== Users & Produk di localStorage =====
+// ===== LocalStorage init =====
 if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([{username:'admin',password:'admin123',role:'Admin'}]));
 if(!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
 
 function getUsers(){ return JSON.parse(localStorage.getItem('users'));}
-function getProducts(){ return JSON.parse(localStorage.getItem('products'));}
 function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users));}
+function getProducts(){ return JSON.parse(localStorage.getItem('products'));}
 function saveProducts(products){ localStorage.setItem('products', JSON.stringify(products));}
 
 // ===== Navigation =====
@@ -117,7 +103,7 @@ else logoutBtn.style.display='none';
 renderProducts();
 }
 
-// ===== Render Products =====
+// ===== Render Produk =====
 function renderProducts(){
 const preview = document.getElementById('previewProducts');
 const userP = document.getElementById('userProducts');
@@ -139,17 +125,14 @@ products.forEach((p,i)=>{
 if(p.owner===loggedUser.username){
 const div = document.createElement('div'); div.className='product'; div.textContent=p.name+' | '+p.price;
 const btn = document.createElement('button'); btn.textContent='Hapus'; btn.onclick=()=>{
-let prods = getProducts();
-prods.splice(i,1);
-saveProducts(prods);
-renderProducts();
+let prods = getProducts(); prods.splice(i,1); saveProducts(prods); renderProducts();
 }
 div.appendChild(btn);
 userP.appendChild(div);
 }
 });
 }else if(loggedUser.role==='Admin'){
-document.getElementById('dashboardTitle').textContent='Data Pendapatan Penjual (Tips)';
+document.getElementById('dashboardTitle').textContent='Data Pendapatan Penjual';
 document.getElementById('addProduct').style.display='none';
 let statsHTML='<table><tr><th>Penjual</th><th>Jumlah Produk</th><th>Estimasi Tips</th></tr>';
 const penjualList = getUsers().filter(u=>u.role==='Penjual');
@@ -185,10 +168,8 @@ const password = document.getElementById('password').value.trim();
 const errorEl = document.getElementById('error');
 const users = getUsers();
 const user = users.find(u=>u.username===username && u.password===password);
-if(user){
-localStorage.setItem('loggedInUser',JSON.stringify(user));
-showSection('dashboard');
-} else { errorEl.textContent='Username atau Password salah!'; }
+if(user){ localStorage.setItem('loggedInUser',JSON.stringify(user)); showSection('dashboard'); } 
+else { errorEl.textContent='Username atau Password salah!'; }
 });
 
 // ===== Logout =====
