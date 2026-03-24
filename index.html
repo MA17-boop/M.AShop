@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Super Visual Full</title>
+<title>M.AShop Super Visual</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body{
@@ -47,7 +47,6 @@ section.active{display:block; opacity:1; transform:translateY(0);}
   font-size:1.1rem; color:white;
   box-shadow:0 4px 12px rgba(0,0,0,0.3);
 }
-#particles{position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1;}
 
 /* Animations */
 @keyframes slideFade{0%{opacity:0; transform:translateY(50px);}100%{opacity:1; transform:translateY(0);}}
@@ -142,111 +141,106 @@ button:hover{transform:scale(1.05);}
 </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-
 <script>
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyAqPWxMcBFj6-t_fUJx0AmJFryvrozLHNo",
-  authDomain: "ma17shop.firebaseapp.com",
-  projectId: "ma17shop",
-  storageBucket: "ma17shop.appspot.com",
-  messagingSenderId: "473838132234",
-  appId: "1:473838132234:web:4b336fc4f16e586dc4d3f3"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const storage = firebase.storage();
+// ===== LocalStorage Init =====
+if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([]));
+if(!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
+function getUsers(){ return JSON.parse(localStorage.getItem('users')); }
+function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
+function getProducts(){ return JSON.parse(localStorage.getItem('products')); }
+function saveProducts(products){ localStorage.setItem('products', JSON.stringify(products)); }
 
-let currentUser = null;
+// ===== Navigation =====
 const sections = document.querySelectorAll('section');
 const logoutBtn = document.getElementById('logoutBtn');
-
+let currentUser = null;
 function showSection(id){
-sections.forEach(s=>s.classList.remove('active'));
+sections.forEach(sec=>sec.classList.remove('active'));
 document.getElementById(id).classList.add('active');
 logoutBtn.style.display=currentUser?'inline-block':'none';
 if(currentUser) document.getElementById('userRole').textContent=currentUser.username;
 renderProducts();
 }
 
-function logout(){ currentUser=null; showSection('home'); }
-
-// Register
-document.getElementById('registerBtn').addEventListener('click', async ()=>{
+// ===== Register =====
+document.getElementById('registerBtn').addEventListener('click',()=>{
 const username=document.getElementById('regUsername').value.trim();
 const wa=document.getElementById('regWA').value.trim();
 const password=document.getElementById('regPassword').value.trim();
 const regError=document.getElementById('regError');
 if(!username||!wa||!password){ regError.textContent='Isi semua data!'; return;}
-const snapshot = await db.collection('users').where('wa','==',wa).get();
-if(!snapshot.empty){ regError.textContent='Nomor WA sudah dipakai!'; return;}
-await db.collection('users').add({username,wa,password});
+let users=getUsers();
+if(users.find(u=>u.wa===wa)){ regError.textContent='Nomor WA sudah dipakai!'; return;}
+users.push({username,wa,password});
+saveUsers(users);
 alert('Akun berhasil dibuat! Silahkan login.'); showSection('login');
 });
 
-// Login
-document.getElementById('loginBtn').addEventListener('click', async ()=>{
+// ===== Login =====
+document.getElementById('loginBtn').addEventListener('click',()=>{
 const wa=document.getElementById('loginWA').value.trim();
 const password=document.getElementById('loginPassword').value.trim();
-const snapshot = await db.collection('users').where('wa','==',wa).where('password','==',password).get();
-if(!snapshot.empty){
-currentUser = snapshot.docs[0].data(); currentUser.id=snapshot.docs[0].id;
-showSection('dashboard');
-}else document.getElementById('loginError').textContent='Nomor WA atau Password salah!';
+let users=getUsers();
+const user=users.find(u=>u.wa===wa && u.password===password);
+if(user){ currentUser=user; showSection('dashboard'); } 
+else document.getElementById('loginError').textContent='Nomor WA atau Password salah!';
 });
 
-// Render Products
-async function renderProducts(){
+// ===== Logout =====
+function logout(){ currentUser=null; showSection('home');}
+
+// ===== Modal =====
+const modal=document.getElementById('productModal');
+document.getElementById('addProductBtn').addEventListener('click',()=>{modal.style.display='flex';});
+function closeModal(){modal.style.display='none';}
+
+// ===== Simpan Produk =====
+document.getElementById('saveProductBtn').addEventListener('click',()=>{
+const name=document.getElementById('prodName').value.trim();
+const price=document.getElementById('prodPrice').value.trim();
+const imageFile=document.getElementById('prodImage').files[0];
+if(!name||!price||!imageFile){ return alert('Isi semua data!'); }
+if(imageFile.size > 100*1024*1024){ alert('Ukuran file max 100MB'); return;}
+const reader=new FileReader();
+reader.onload=function(e){
+let products=getProducts();
+products.push({name,price,image:e.target.result,username:currentUser.username,wa:currentUser.wa});
+saveProducts(products); renderProducts(); closeModal();
+document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';document.getElementById('prodImage').value='';
+};
+reader.readAsDataURL(imageFile);
+});
+
+// ===== Hapus Produk =====
+function deleteProduct(index){
+if(confirm('Yakin hapus produk ini?')){
+let products=getProducts();
+products.splice(index,1); saveProducts(products); renderProducts();
+}
+}
+
+// ===== Render Produk =====
+function renderProducts(){
 const preview=document.getElementById('previewProducts');
 const userP=document.getElementById('userProducts');
 preview.innerHTML=''; userP.innerHTML='';
-const productsSnap = await db.collection('products').orderBy('timestamp','desc').get();
-productsSnap.forEach(doc=>{
-const p = doc.data();
+let products=getProducts();
+products.forEach((p,i)=>{
 const div=document.createElement('div'); div.className='product';
-div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${p.price}</p><span>${p.username}</span>
+div.innerHTML=`<img src="${p.image}"><h4>${p.name}</h4><p>Rp ${Number(p.price).toLocaleString()}</p><span>${p.username}</span>
 <br><button onclick="window.open('https://wa.me/62${p.wa}','_blank')">Hubungi Penjual</button>`;
-if(currentUser && p.username===currentUser.username) div.innerHTML+=`<br><button onclick="deleteProduct('${doc.id}')">Hapus</button>`;
+if(currentUser && p.username===currentUser.username) div.innerHTML+=`<br><button onclick="deleteProduct(${i})">Hapus</button>`;
 preview.appendChild(div);
 if(currentUser && p.username===currentUser.username) userP.appendChild(div.cloneNode(true));
 });
 }
 
-// Modal Product
-const modal=document.getElementById('productModal');
-document.getElementById('addProductBtn').addEventListener('click',()=>{modal.style.display='flex';});
-function closeModal(){modal.style.display='none';}
-
-// Save Product
-document.getElementById('saveProductBtn').addEventListener('click', async ()=>{
-const name=document.getElementById('prodName').value.trim();
-const price=document.getElementById('prodPrice').value.trim();
-const imageFile=document.getElementById('prodImage').files[0];
-if(!name||!price||!imageFile){ return alert('Isi semua data!'); }
-const storageRef = storage.ref().child('products/'+Date.now()+'_'+imageFile.name);
-await storageRef.put(imageFile);
-const imageURL = await storageRef.getDownloadURL();
-await db.collection('products').add({
-name, price, image:imageURL,
-username: currentUser.username, wa: currentUser.wa,
-timestamp: firebase.firestore.FieldValue.serverTimestamp()
-});
-renderProducts(); closeModal();
-document.getElementById('prodName').value=''; document.getElementById('prodPrice').value=''; document.getElementById('prodImage').value='';
-});
-
-// Delete Product
-async function deleteProduct(id){ if(confirm('Yakin hapus produk ini?')){ await db.collection('products').doc(id).delete(); renderProducts(); } }
-
-// Particle Animation
+// ===== Particle Animation =====
 const canvas=document.getElementById('particles');
 const ctx=canvas.getContext('2d');
 canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 let particles=[];
-for(let i=0;i<150;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,speed:Math.random()*0.5+0.2});}
+for(let i=0;i<100;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,speed:Math.random()*0.5+0.2});}
 function animateParticles(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 particles.forEach(p=>{
