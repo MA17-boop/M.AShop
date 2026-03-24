@@ -3,178 +3,186 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toko M.A17 Marketplace</title>
+<title>M.AShop Final</title>
 <style>
-body {margin:0;font-family:Arial;background:#f5f5f5;}
-#landing {height:100vh;background:linear-gradient(135deg,#ff5722,#ff9800);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
-button {cursor:pointer}
-.navbar {background:#ff5722;color:white;padding:15px;display:flex;justify-content:space-between;}
-.menu {display:flex;justify-content:space-around;background:white;padding:10px;}
-.menu button {border:none;background:none;font-weight:bold}
-.grid {display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}
-.card {background:white;border-radius:15px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
-.card img {width:100%}
-.info {padding:10px}
-.harga {color:#ff5722;font-weight:bold}
-.buy {background:#ff5722;color:white;border:none;width:100%;padding:10px;margin-top:5px;border-radius:10px;}
-input,textarea,select {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none;}
-#notif {position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none;z-index:999;}
+/* ===== Umum ===== */
+body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
+header{background:#0077ff;color:white;padding:1rem;display:flex;justify-content:space-between;align-items:center;}
+header button{background:white;color:#0077ff;padding:0.5rem 1rem;border:none;border-radius:5px;cursor:pointer;transition: transform 0.3s;}
+header button:hover{transform:scale(1.1);}
+section{display:none;padding:2rem;}
+section.active{display:block;animation:fadeIn 1s ease;}
+h2,h3{margin-top:0;}
+
+/* ===== Hero ===== */
+.hero{text-align:center;padding:3rem 1rem;}
+.hero img{width:150px;animation:bounce 2s infinite;}
+
+/* ===== Products ===== */
+.products{display:flex;justify-content:center;gap:1rem;padding:2rem;flex-wrap:wrap;}
+.product{background:white;padding:1rem;border-radius:10px;transition:transform 0.3s,box-shadow 0.3s;cursor:pointer;width:120px;text-align:center;position:relative;}
+.product:hover{transform:translateY(-10px);box-shadow:0 10px 20px rgba(0,0,0,0.2);}
+.product button{display:none;position:absolute;top:5px;right:5px;background:red;color:white;border:none;padding:2px 5px;border-radius:3px;cursor:pointer;}
+.product:hover button{display:block;}
+
+/* ===== Login ===== */
+.login-container{max-width:300px;margin:50px auto;background:white;padding:2rem;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.2);}
+.login-container input,.login-container button{width:100%;padding:0.5rem;margin:0.5rem 0;}
+.error{color:red;font-size:0.9rem;}
+
+/* ===== Dashboard ===== */
+#dashboard .product-table{margin-top:1rem;}
+#addProduct{margin-top:1rem;padding:0.5rem 1rem;background:#0077ff;color:white;border:none;border-radius:5px;cursor:pointer;}
+#addProduct:hover{background:#005bb5;}
+table{width:100%;border-collapse:collapse;margin-top:1rem;}
+th,td{border:1px solid #ddd;padding:0.5rem;text-align:center;}
+th{background:#0077ff;color:white;}
+
+/* ===== Animasi ===== */
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ===== Responsif ===== */
+@media(max-width:600px){.products{flex-direction:column;align-items:center;}}
 </style>
 </head>
 <body>
 
-<div id="landing">
-  <h1>🛒 Toko M.A17 Marketplace</h1>
-  <p>Platform jualan & dropship modern 🔥</p>
-  <button onclick="masuk()">Masuk 🚀</button>
+<header>
+<h1>M.AShop</h1>
+<div id="navBtns">
+<button onclick="showSection('home')">Home</button>
+<button onclick="showSection('login')">Login</button>
+<button onclick="showSection('products')">Produk</button>
 </div>
+<button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+</header>
 
-<div id="main" style="display:none;">
-  <div class="navbar">
-    <b>M.A17</b>
-    <input type="text" placeholder="Cari..." oninput="cari(this.value)">
-  </div>
-
-  <div class="menu">
-    <button onclick="show('home')">Home</button>
-    <button onclick="show('produk')">Produk</button>
-    <button onclick="show('cart')">Keranjang</button>
-    <button onclick="show('admin')">Admin</button>
-    <button onclick="show('sellerLogin')">Penjual</button>
-  </div>
-
-  <div id="home"><div class="grid" id="homeList"></div></div>
-  <div id="produk" style="display:none;"><div class="grid" id="produkList"></div></div>
-
-  <div id="cart" style="display:none;padding:10px;">
-    <h2>Keranjang</h2>
-    <div id="cartList"></div>
-    <h3 id="totalText"></h3>
-    <h4 id="profitText"></h4>
-    <input id="namaPembeli" placeholder="Nama">
-    <textarea id="alamat" placeholder="Alamat"></textarea>
-    <button onclick="checkout()" class="buy">Checkout Semua</button>
-    <button onclick="chatCart()" class="buy">Chat Per Item</button>
-  </div>
-
-  <div id="admin" style="display:none;padding:10px;">
-    <h2>Admin Login</h2>
-    <input id="adminPass" type="password">
-    <button onclick="loginAdmin()">Login</button>
-    <div id="adminPanel" style="display:none;">
-      <h3>Total Keuntungan</h3>
-      <h2 id="totalProfit">Rp 0</h2>
-    </div>
-  </div>
-
-  <div id="sellerLogin" style="display:none;padding:10px;">
-    <h2>Login Penjual</h2>
-    <input id="sellerWA" placeholder="Nomor WA (628...)">
-    <button onclick="loginSeller()">Masuk</button>
-  </div>
-
-  <div id="sellerPanel" style="display:none;padding:10px;">
-    <h2>Panel Penjual</h2>
-    <input id="nama" placeholder="Nama Produk">
-    <input id="harga" type="number" placeholder="Harga Asli">
-    <input id="komisi" type="number" placeholder="Komisi Admin">
-    <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
-    <input type="file" id="gambar">
-    <button onclick="tambahProduk()">Upload Produk</button>
-    <button onclick="resetData()">Reset Semua Data</button>
-  </div>
+<!-- ===== Home ===== -->
+<section id="home" class="active">
+<div class="hero">
+<h2>Selamat Datang di M.AShop!</h2>
+<p>Belanja mudah & cepat, semua ada di sini.</p>
+<img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Keranjang">
 </div>
+<div class="products-preview">
+<h3>Produk Terbaru</h3>
+<div class="products" id="previewProducts"></div>
+</div>
+</section>
 
-<div id="notif"></div>
+<!-- ===== Login ===== -->
+<section id="login">
+<div class="login-container">
+<h2>Login</h2>
+<form id="loginForm">
+<input type="text" id="username" placeholder="Username" required>
+<input type="password" id="password" placeholder="Password" required>
+<button type="submit">Login</button>
+<p id="error" class="error"></p>
+</form>
+</div>
+</section>
+
+<!-- ===== Products ===== -->
+<section id="products">
+<h2>Daftar Produk</h2>
+<div class="products" id="allProducts"></div>
+</section>
+
+<!-- ===== Dashboard ===== -->
+<section id="dashboard">
+<h2>Selamat Datang, <span id="userRole"></span></h2>
+<h3>Produk Anda</h3>
+<div class="products" id="userProducts"></div>
+<button id="addProduct">Tambah Produk</button>
+</section>
 
 <script>
-let data = [];        // Semua produk mulai kosong
-let cart = [];        // Keranjang mulai kosong
-let totalProfit = 0;  // Profit mulai kosong
-let currentSeller = "";
+// ===== Dummy Users =====
+const users = [
+{username:'admin',password:'Alfian17',role:'Admin'},
+{username:'seller',password:'seller123',role:'Penjual'}
+];
 
-/* MASUK */
-function masuk(){landing.style.display="none"; main.style.display="block";}
+// ===== Dummy Produk =====
+let products = [
+{name:'Produk 1',price:'Rp50.000',owner:'seller'},
+{name:'Produk 2',price:'Rp75.000',owner:'seller'},
+{name:'Produk A',price:'Rp60.000',owner:'admin'},
+{name:'Produk B',price:'Rp80.000',owner:'admin'}
+];
 
-/* NAV */
-function show(p){
-  ["home","produk","cart","admin","sellerLogin","sellerPanel"].forEach(id=>document.getElementById(id).style.display="none");
-  document.getElementById(p).style.display="block";
-  tampil(); tampilCart();
+// ===== Navigasi =====
+const sections = document.querySelectorAll('section');
+const logoutBtn = document.getElementById('logoutBtn');
+function showSection(id){
+sections.forEach(sec=>sec.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+if(loggedUser){ logoutBtn.style.display='inline-block'; if(id==='login') showSection('dashboard'); }
+else logoutBtn.style.display='none';
+renderProducts();
 }
 
-/* NOTIF */
-function notif(text){let n=document.getElementById("notif"); n.innerText=text; n.style.display="block"; setTimeout(()=>{n.style.display="none"},2000);}
-
-/* LOGIN */
-function loginAdmin(){if(adminPass.value==="admin123"){adminPanel.style.display="block"; document.getElementById("totalProfit").innerText="Rp "+totalProfit; notif("Login Admin Berhasil");} else notif("Password salah");}
-function loginSeller(){if(!sellerWA.value){notif("Isi nomor WA"); return;} currentSeller=sellerWA.value; sellerPanel.style.display="block"; notif("Login Penjual Berhasil");}
-
-/* FORMAT WA +62 */
-function formatWA(wa){wa=wa.replace(/[\s\-()]/g,""); if(wa.startsWith("0")) wa="62"+wa.slice(1); return wa;}
-
-/* TAMBAH PRODUK */
-function tambahProduk(){
-  if(!nama.value || !harga.value || !komisi.value || !deskripsi.value){notif("Isi semua data!"); return;}
-  let file=gambar.files[0]; if(!file){notif("Pilih gambar"); return;}
-  let reader=new FileReader(); reader.onload=function(){
-    data.push({nama:nama.value,harga:harga.value,komisi:komisi.value,deskripsi:deskripsi.value,wa:currentSeller,gambar:reader.result});
-    localStorage.setItem("produk", JSON.stringify(data)); notif("Produk ditambahkan"); tampil();
-  }; reader.readAsDataURL(file);
+// ===== Render Produk =====
+function renderProducts(){
+const preview = document.getElementById('previewProducts');
+const allP = document.getElementById('allProducts');
+const userP = document.getElementById('userProducts');
+preview.innerHTML=''; allP.innerHTML=''; userP.innerHTML='';
+products.forEach((p,i)=>{
+// Preview
+const div1=document.createElement('div'); div1.className='product'; div1.textContent=p.name; preview.appendChild(div1);
+// All Products
+const div2=document.createElement('div'); div2.className='product'; div2.textContent=p.name+' | '+p.price; allP.appendChild(div2);
+// User Products
+const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+if(loggedUser && (loggedUser.role==='Admin' || p.owner===loggedUser.username)){
+const div3=document.createElement('div'); div3.className='product'; div3.textContent=p.name+' | '+p.price;
+const btn = document.createElement('button'); btn.textContent='Hapus'; btn.onclick=()=>{products.splice(i,1); renderProducts();}
+div3.appendChild(btn);
+userP.appendChild(div3);
+}
+});
 }
 
-/* TAMPIL */
-function tampil(){
-  let home=document.getElementById("homeList"); let produk=document.getElementById("produkList");
-  home.innerHTML=""; produk.innerHTML="";
-  data.forEach((p,i)=>{
-    let hargaJual=parseInt(p.harga)+parseInt(p.komisi||0);
-    let tombolHapus=(p.wa===currentSeller)?`<button class="buy" onclick="hapus(${i})">Hapus</button>`:"";
-    let html=`<div class="card"><img src="${p.gambar}"><div class="info"><b>${p.nama}</b><div class="harga">Rp ${hargaJual}</div><small>${p.deskripsi}</small></div><button class="buy" onclick="addCart(${i})">Beli</button><button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>${tombolHapus}</div>`;
-    home.innerHTML+=html; produk.innerHTML+=html;
-  });
+// ===== Login =====
+const loginForm=document.getElementById('loginForm');
+if(loginForm){
+loginForm.addEventListener('submit',function(e){
+e.preventDefault();
+const username=document.getElementById('username').value;
+const password=document.getElementById('password').value;
+const errorEl=document.getElementById('error');
+const user=users.find(u=>u.username===username && u.password===password);
+if(user){
+localStorage.setItem('loggedInUser',JSON.stringify(user));
+document.getElementById('userRole').textContent=user.role;
+showSection('dashboard');
+} else { errorEl.textContent='Username atau Password salah!'; }
+});
 }
 
-/* CHAT */
-function chat(wa,nama){let nomor=formatWA(wa); let pesan="🛒 *INFO PRODUK*\n\nProduk: "+nama+"\nSilakan hubungi saya jika tertarik 😊"; window.open("https://wa.me/"+nomor+"?text="+encodeURIComponent(pesan));}
+// ===== Logout =====
+function logout(){ localStorage.removeItem('loggedInUser'); showSection('home'); }
 
-/* HAPUS */
-function hapus(i){data.splice(i,1); localStorage.setItem("produk", JSON.stringify(data)); notif("Produk dihapus"); tampil();}
+// ===== Tambah Produk =====
+document.getElementById('addProduct').addEventListener('click',function(){
+const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+if(!loggedUser) return alert('Login dulu!');
+const name = prompt('Nama Produk:'); if(!name) return;
+const price = prompt('Harga Produk:'); if(!price) return;
+products.push({name,price,owner:loggedUser.username});
+renderProducts();
+});
 
-/* CART */
-function addCart(i){cart.push(data[i]); localStorage.setItem("cart", JSON.stringify(cart)); notif("Masuk keranjang");}
-function tampilCart(){let total=0,profit=0,list=""; cart.forEach(p=>{let harga=parseInt(p.harga)+parseInt(p.komisi||0); total+=harga; profit+=parseInt(p.komisi||0); list+=p.nama+" - Rp "+harga+"<br>";}); cartList.innerHTML=list; totalText.innerText="Total: Rp "+total; profitText.innerText="Keuntungan kamu: Rp "+profit;}
+// ===== Check Login on Load =====
+const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+if(loggedUser){ document.getElementById('userRole').textContent = loggedUser.role; logoutBtn.style.display='inline-block'; }
 
-/* CHECKOUT */
-function checkout(){
-  let namaPembeli=document.getElementById("namaPembeli").value;
-  let alamat=document.getElementById("alamat").value;
-  if(!namaPembeli||!alamat){notif("Isi data dulu!"); return;}
-  if(cart.length===0){notif("Keranjang kosong!"); return;}
-  let group={}; cart.forEach(p=>{if(!group[p.wa]) group[p.wa]=[]; group[p.wa].push(p);});
-  for(let wa in group){
-    let pesan="🛒 *PESANAN BARU*\n─────────────────\n";
-    pesan+="👤 Nama: "+namaPembeli+"\n🏠 Alamat: "+alamat+"\n\n";
-    let total=0, profit=0;
-    group[wa].forEach((p,i)=>{let harga=parseInt(p.harga)+parseInt(p.komisi||0); pesan+=(i+1)+". "+p.nama+" - Rp"+harga+"\n"; total+=harga; profit+=parseInt(p.komisi||0);});
-    pesan+="\n💰 Total: Rp"+total+"\n📈 Keuntungan Admin: Rp"+profit+"\n─────────────────\nTerima kasih! 🙏";
-    totalProfit+=profit;
-    window.open("https://wa.me/"+formatWA(wa)+"?text="+encodeURIComponent(pesan));
-  }
-  localStorage.setItem("profit", totalProfit); cart=[]; localStorage.setItem("cart", JSON.stringify(cart)); tampilCart(); notif("Pesanan dikirim!");
-}
-
-/* CHAT PER ITEM */
-function chatCart(){if(cart.length===0){notif("Keranjang kosong!"); return;}
-cart.forEach(p=>{let pesan="🛒 *INFO PRODUK*\n\nProduk: "+p.nama+"\nHarga: Rp"+(parseInt(p.harga)+parseInt(p.komisi||0))+"\nDeskripsi: "+p.deskripsi+"\nSilakan hubungi saya jika tertarik 😊"; window.open("https://wa.me/"+formatWA(p.wa)+"?text="+encodeURIComponent(pesan));});}
-
-/* RESET DATA */
-function resetData(){if(confirm("Yakin mau hapus semua data?")){localStorage.clear(); data=[]; cart=[]; totalProfit=0; tampil(); tampilCart(); notif("Semua data telah dihapus");}}
-
-/* SEARCH */
-function cari(t){let produk=document.getElementById("produkList"); produk.innerHTML=""; data.filter(p=>p.nama.toLowerCase().includes(t.toLowerCase())).forEach((p,i)=>{let harga=parseInt(p.harga)+parseInt(p.komisi||0); let tombolHapus=(p.wa===currentSeller)?`<button class="buy" onclick="hapus(${i})">Hapus</button>`:""; let html=`<div class="card"><img src="${p.gambar}"><div class="info"><b>${p.nama}</b><div class="harga">Rp ${harga}</div><small>${p.deskripsi}</small></div><button class="buy" onclick="addCart(${i})">Beli</button><button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>${tombolHapus}</div>`; produk.innerHTML+=html;}); show('produk');}
-
-tampil();
+renderProducts();
 </script>
+
 </body>
 </html>
