@@ -145,6 +145,7 @@ button:hover{transform:scale(1.05);}
 // ===== LocalStorage Init =====
 if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([]));
 if(!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
+let currentUser = null;
 function getUsers(){ return JSON.parse(localStorage.getItem('users')); }
 function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
 function getProducts(){ return JSON.parse(localStorage.getItem('products')); }
@@ -153,7 +154,6 @@ function saveProducts(products){ localStorage.setItem('products', JSON.stringify
 // ===== Navigation =====
 const sections = document.querySelectorAll('section');
 const logoutBtn = document.getElementById('logoutBtn');
-let currentUser = null;
 function showSection(id){
 sections.forEach(sec=>sec.classList.remove('active'));
 document.getElementById(id).classList.add('active');
