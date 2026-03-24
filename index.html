@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M.AShop Stylish</title>
+<title>M.AShop Final App</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ===== Global ===== */
 body{font-family:'Poppins',sans-serif;margin:0;padding:0;background:#f4f6f8;color:#333;}
 header{background:#0d47a1;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
 header button{background:#ff9800;color:white;padding:0.5rem 1rem;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;}
@@ -43,6 +42,7 @@ th{background:#0d47a1;color:white;}
 <div id="navBtns">
 <button onclick="showSection('home')">Home</button>
 <button onclick="showSection('login')">Login</button>
+<button onclick="showSection('register')">Register</button>
 </div>
 <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
 </header>
@@ -57,6 +57,19 @@ th{background:#0d47a1;color:white;}
 <div class="products-preview">
 <h3>Produk Terbaru</h3>
 <div class="products" id="previewProducts"></div>
+</div>
+</section>
+
+<!-- Register -->
+<section id="register">
+<div class="login-container">
+<h2>Register Penjual Baru</h2>
+<form id="registerForm">
+<input type="text" id="regUsername" placeholder="Username" required>
+<input type="password" id="regPassword" placeholder="Password" required>
+<button type="submit">Register</button>
+<p id="regError" class="error"></p>
+</form>
 </div>
 </section>
 
@@ -83,36 +96,34 @@ th{background:#0d47a1;color:white;}
 </section>
 
 <script>
-// Users
-const users = [
-{username:'admin',password:'MAlfian17',role:'Admin'},
-{username:'PenjualA',password:'passA',role:'Penjual'},
-{username:'PenjualB',password:'passB',role:'Penjual'},
-{username:'PenjualC',password:'passC',role:'Penjual'}
-];
+// ===== Users & Produk di localStorage =====
+if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify([{username:'admin',password:'admin123',role:'Admin'}]));
+if(!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
 
-// Produk
-let products = [];
+function getUsers(){ return JSON.parse(localStorage.getItem('users'));}
+function getProducts(){ return JSON.parse(localStorage.getItem('products'));}
+function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users));}
+function saveProducts(products){ localStorage.setItem('products', JSON.stringify(products));}
 
-// Navigation
+// ===== Navigation =====
 const sections = document.querySelectorAll('section');
 const logoutBtn = document.getElementById('logoutBtn');
-
 function showSection(id){
 sections.forEach(sec=>sec.classList.remove('active'));
 document.getElementById(id).classList.add('active');
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
-if(user){ logoutBtn.style.display='inline-block'; if(id==='login') showSection('dashboard'); }
+if(user){ logoutBtn.style.display='inline-block'; if(id==='login' || id==='register') showSection('dashboard'); }
 else logoutBtn.style.display='none';
 renderProducts();
 }
 
-// Render Products
+// ===== Render Products =====
 function renderProducts(){
 const preview = document.getElementById('previewProducts');
 const userP = document.getElementById('userProducts');
 const adminStats = document.getElementById('adminStats');
 preview.innerHTML=''; userP.innerHTML=''; adminStats.innerHTML='';
+const products = getProducts();
 products.forEach((p,i)=>{
 const divHome = document.createElement('div'); divHome.className='product'; divHome.textContent=(i+1)+'. '+p.name+' ('+p.owner+')'; preview.appendChild(divHome);
 });
@@ -127,7 +138,12 @@ document.getElementById('addProduct').style.display='inline-block';
 products.forEach((p,i)=>{
 if(p.owner===loggedUser.username){
 const div = document.createElement('div'); div.className='product'; div.textContent=p.name+' | '+p.price;
-const btn = document.createElement('button'); btn.textContent='Hapus'; btn.onclick=()=>{products.splice(i,1); renderProducts();}
+const btn = document.createElement('button'); btn.textContent='Hapus'; btn.onclick=()=>{
+let prods = getProducts();
+prods.splice(i,1);
+saveProducts(prods);
+renderProducts();
+}
 div.appendChild(btn);
 userP.appendChild(div);
 }
@@ -136,7 +152,7 @@ userP.appendChild(div);
 document.getElementById('dashboardTitle').textContent='Data Pendapatan Penjual (Tips)';
 document.getElementById('addProduct').style.display='none';
 let statsHTML='<table><tr><th>Penjual</th><th>Jumlah Produk</th><th>Estimasi Tips</th></tr>';
-const penjualList = users.filter(u=>u.role==='Penjual');
+const penjualList = getUsers().filter(u=>u.role==='Penjual');
 penjualList.forEach(pj=>{
 const count = products.filter(pr=>pr.owner===pj.username).length;
 const tips = count * 5000;
@@ -147,36 +163,50 @@ adminStats.innerHTML=statsHTML;
 }
 }
 
-// Login
-const loginForm=document.getElementById('loginForm');
-if(loginForm){
-loginForm.addEventListener('submit',function(e){
+// ===== Register =====
+document.getElementById('registerForm').addEventListener('submit',function(e){
 e.preventDefault();
-const username=document.getElementById('username').value;
-const password=document.getElementById('password').value;
-const errorEl=document.getElementById('error');
-const user=users.find(u=>u.username===username && u.password===password);
+const username = document.getElementById('regUsername').value.trim();
+const password = document.getElementById('regPassword').value.trim();
+const regError = document.getElementById('regError');
+let users = getUsers();
+if(users.find(u=>u.username===username)){ regError.textContent='Username sudah dipakai!'; return;}
+users.push({username,password,role:'Penjual'});
+saveUsers(users);
+alert('Akun berhasil dibuat! Silahkan login.');
+showSection('login');
+});
+
+// ===== Login =====
+document.getElementById('loginForm').addEventListener('submit',function(e){
+e.preventDefault();
+const username = document.getElementById('username').value.trim();
+const password = document.getElementById('password').value.trim();
+const errorEl = document.getElementById('error');
+const users = getUsers();
+const user = users.find(u=>u.username===username && u.password===password);
 if(user){
 localStorage.setItem('loggedInUser',JSON.stringify(user));
 showSection('dashboard');
 } else { errorEl.textContent='Username atau Password salah!'; }
 });
-}
 
-// Logout
-function logout(){ localStorage.removeItem('loggedInUser'); showSection('home'); }
+// ===== Logout =====
+function logout(){ localStorage.removeItem('loggedInUser'); showSection('home');}
 
-// Tambah Produk Penjual
+// ===== Tambah Produk Penjual =====
 document.getElementById('addProduct').addEventListener('click',function(){
 const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
 if(!loggedUser || loggedUser.role!=='Penjual') return alert('Login Penjual dulu!');
 const name = prompt('Nama Produk:'); if(!name) return;
 const price = prompt('Harga Produk:'); if(!price) return;
+let products = getProducts();
 products.push({name,price,owner:loggedUser.username});
+saveProducts(products);
 renderProducts();
 });
 
-// Cek login on load
+// ===== Load login on start =====
 const loggedUser = JSON.parse(localStorage.getItem('loggedInUser'));
 if(loggedUser) showSection('dashboard');
 
