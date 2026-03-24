@@ -13,32 +13,40 @@ body {margin:0;font-family:Arial;background:#f5f5f5;}
   color:white;display:flex;flex-direction:column;
   justify-content:center;align-items:center;text-align:center;
 }
+
 .navbar {background:#ff5722;color:white;padding:15px;display:flex;justify-content:space-between;}
 .menu {display:flex;justify-content:space-around;background:white;padding:10px;}
 .menu button {border:none;background:none;font-weight:bold;}
+
 .grid {display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}
 .card {background:white;border-radius:15px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
 .card img {width:100%;}
 .info {padding:10px;}
 .harga {color:#ff5722;font-weight:bold;}
 .buy {background:#ff5722;color:white;border:none;width:100%;padding:10px;margin-top:5px;}
+
 input,textarea {width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none;}
+
 #notif {
-position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none;
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#22c55e;
+color:white;
+padding:10px 20px;
+border-radius:10px;
+display:none;
+z-index:999;
 }
 </style>
-
-<!-- FIREBASE CDN -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
 </head>
 
 <body>
 
 <div id="landing">
   <h1>🛒 Toko M.A17 Marketplace</h1>
+  <p>Platform jualan & dropship modern 🔥</p>
   <button onclick="masuk()">Masuk 🚀</button>
 </div>
 
@@ -53,6 +61,7 @@ background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none
   <button onclick="show('home')">Home</button>
   <button onclick="show('produk')">Produk</button>
   <button onclick="show('cart')">Keranjang</button>
+  <button onclick="show('admin')">Admin</button>
   <button onclick="show('sellerLogin')">Penjual</button>
 </div>
 
@@ -63,6 +72,7 @@ background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none
   <h2>Keranjang</h2>
   <div id="cartList"></div>
   <h3 id="totalText"></h3>
+  <h4 id="profitText"></h4>
 
   <input id="namaPembeli" placeholder="Nama">
   <textarea id="alamat" placeholder="Alamat"></textarea>
@@ -70,9 +80,20 @@ background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none
   <button onclick="checkout()" class="buy">Checkout</button>
 </div>
 
+<div id="admin" style="display:none;padding:10px;">
+  <h2>Admin Login</h2>
+  <input id="adminPass" type="password">
+  <button onclick="loginAdmin()">Login</button>
+
+  <div id="adminPanel" style="display:none;">
+    <h3>Total Keuntungan</h3>
+    <h2 id="totalProfit">Rp 0</h2>
+  </div>
+</div>
+
 <div id="sellerLogin" style="display:none;padding:10px;">
   <h2>Login Penjual</h2>
-  <input id="sellerWA" placeholder="Nomor WA">
+  <input id="sellerWA" placeholder="Nomor WA (628...)">
   <button onclick="loginSeller()">Masuk</button>
 </div>
 
@@ -80,12 +101,12 @@ background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none
   <h2>Panel Penjual</h2>
 
   <input id="nama" placeholder="Nama Produk">
-  <input id="harga" type="number" placeholder="Harga">
-  <input id="komisi" type="number" placeholder="Komisi">
+  <input id="harga" type="number" placeholder="Harga Asli">
+  <input id="komisi" type="number" placeholder="Komisi Admin">
   <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
   <input type="file" id="gambar">
 
-  <button onclick="tambahProduk()">Upload</button>
+  <button onclick="tambahProduk()">Upload Produk</button>
 </div>
 
 </div>
@@ -93,30 +114,17 @@ background:#22c55e;color:white;padding:10px 20px;border-radius:10px;display:none
 <div id="notif"></div>
 
 <script>
-/* 🔥 GANTI DENGAN CONFIG FIREBASE KAMU */
-const firebaseConfig = {
-  apiKey: "AIzaSyBKr0fJfCQ8jALd1aD33elr1i53IyKm60Q",
-  authDomain: "ma17-2812d.firebaseapp.com",
-  projectId: "ma17-2812d",
-  storageBucket: "ma17-2812d.firebasestorage.app",
-  messagingSenderId: "296605592627",
-  appId: "1:296605592627:web:38ce39d7774667abb74746",
-  measurementId: "G-M6TC6JYKTQ"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-let data = [];
-let cart = [];
+let data = JSON.parse(localStorage.getItem("produk")) || [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let totalProfit = parseInt(localStorage.getItem("profit")) || 0;
 let currentSeller = "";
 
 /* NOTIF */
 function notif(text){
-  let n=document.getElementById("notif");
-  n.innerText=text;
+  let n = document.getElementById("notif");
+  n.innerText = text;
   n.style.display="block";
-  setTimeout(()=>n.style.display="none",2000);
+  setTimeout(()=>{n.style.display="none"},2000);
 }
 
 /* MASUK */
@@ -127,14 +135,24 @@ function masuk(){
 
 /* NAV */
 function show(p){
-  ["home","produk","cart","sellerLogin","sellerPanel"].forEach(id=>{
+  ["home","produk","cart","admin","sellerLogin","sellerPanel"].forEach(id=>{
     document.getElementById(id).style.display="none";
   });
   document.getElementById(p).style.display="block";
+  tampil(); tampilCart();
+}
+
+/* LOGIN ADMIN */
+function loginAdmin(){
+  if(adminPass.value==="admin123"){
+    adminPanel.style.display="block";
+    totalProfit.innerText="Rp "+totalProfit;
+  } else notif("Password salah");
 }
 
 /* LOGIN SELLER */
 function loginSeller(){
+  if(!sellerWA.value){notif("Isi nomor WA");return;}
   currentSeller = sellerWA.value;
   sellerPanel.style.display="block";
   notif("Login berhasil");
@@ -142,32 +160,30 @@ function loginSeller(){
 
 /* TAMBAH PRODUK */
 function tambahProduk(){
+  if(!nama.value || !harga.value || !komisi.value || !deskripsi.value){
+    notif("Isi semua data!");
+    return;
+  }
+
   let file = gambar.files[0];
   if(!file){notif("Pilih gambar");return;}
 
   let reader = new FileReader();
   reader.onload = function(){
-    let produk = {
+    data.push({
       nama:nama.value,
       harga:harga.value,
       komisi:komisi.value,
       deskripsi:deskripsi.value,
       wa:currentSeller,
       gambar:reader.result
-    };
-
-    db.ref("produk").push(produk);
-    notif("Produk diupload!");
+    });
+    localStorage.setItem("produk", JSON.stringify(data));
+    notif("Produk ditambahkan");
+    tampil();
   }
   reader.readAsDataURL(file);
 }
-
-/* AMBIL DATA */
-db.ref("produk").on("value", snap=>{
-  data=[];
-  snap.forEach(d=>data.push(d.val()));
-  tampil();
-});
 
 /* TAMPIL */
 function tampil(){
@@ -176,65 +192,95 @@ function tampil(){
   home.innerHTML=""; produk.innerHTML="";
 
   data.forEach((p,i)=>{
-    let harga = parseInt(p.harga)+parseInt(p.komisi||0);
+    let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
 
     let html=`
     <div class="card">
       <img src="${p.gambar}">
       <div class="info">
         <b>${p.nama}</b>
-        <div class="harga">Rp ${harga}</div>
+        <div class="harga">Rp ${hargaJual}</div>
+        <small>Asli: Rp ${p.harga}</small><br>
         <small>${p.deskripsi}</small>
       </div>
       <button class="buy" onclick="addCart(${i})">Beli</button>
       <button class="buy" onclick="chat('${p.wa}','${p.nama}')">Chat</button>
+      <button class="buy" onclick="hapus(${i})">Hapus</button>
     </div>`;
     home.innerHTML+=html;
     produk.innerHTML+=html;
   });
 }
 
+/* CHAT */
+function chat(wa,nama){
+  window.open("https://wa.me/"+wa+"?text=Halo saya tertarik dengan "+nama);
+}
+
+/* HAPUS */
+function hapus(i){
+  data.splice(i,1);
+  localStorage.setItem("produk", JSON.stringify(data));
+  notif("Produk dihapus");
+  tampil();
+}
+
 /* CART */
 function addCart(i){
   cart.push(data[i]);
+  localStorage.setItem("cart", JSON.stringify(cart));
   notif("Masuk keranjang");
 }
 
 function tampilCart(){
-  let total=0;
-  let list="";
+  let total=0, profit=0, list="";
   cart.forEach(p=>{
-    let harga = parseInt(p.harga)+parseInt(p.komisi||0);
-    total+=harga;
-    list+=p.nama+" - Rp "+harga+"<br>";
+    let hargaJual = parseInt(p.harga)+parseInt(p.komisi||0);
+    total+=hargaJual;
+    profit+=parseInt(p.komisi||0);
+    list+=p.nama+" - Rp "+hargaJual+"<br>";
   });
   cartList.innerHTML=list;
   totalText.innerText="Total: Rp "+total;
+  profitText.innerText="Keuntungan kamu: Rp "+profit;
 }
 
 /* CHECKOUT */
 function checkout(){
-  let nama=document.getElementById("namaPembeli").value;
+  let namaPembeli=document.getElementById("namaPembeli").value;
   let alamat=document.getElementById("alamat").value;
 
-  if(!nama || !alamat){notif("Isi data!");return;}
+  if(!namaPembeli || !alamat){notif("Isi data dulu!");return;}
+
+  let group={};
 
   cart.forEach(p=>{
-    let harga=parseInt(p.harga)+parseInt(p.komisi||0);
-
-    let pesan = "Pesanan%0A"+nama+"%0A"+alamat+"%0A"+p.nama+" Rp"+harga;
-
-    window.open("https://wa.me/"+p.wa+"?text="+pesan);
+    if(!group[p.wa]) group[p.wa]=[];
+    group[p.wa].push(p);
   });
 
-  cart=[];
-  tampilCart();
-  notif("Pesanan dikirim!");
-}
+  for(let wa in group){
+    let pesan="🛒 *PESANAN BARU*%0A";
+    pesan+="Nama: "+namaPembeli+"%0AAlamat: "+alamat+"%0A%0A";
 
-/* CHAT */
-function chat(wa,nama){
-  window.open("https://wa.me/"+wa+"?text=Halo saya tertarik "+nama);
+    let profit=0;
+    group[wa].forEach((p,i)=>{
+      let hargaJual=parseInt(p.harga)+parseInt(p.komisi||0);
+      pesan+=(i+1)+". "+p.nama+" Rp"+hargaJual+"%0A";
+      profit+=parseInt(p.komisi||0);
+    });
+
+    totalProfit+=profit;
+    window.open("https://wa.me/"+wa+"?text="+pesan);
+  }
+
+  localStorage.setItem("profit", totalProfit);
+
+  cart=[];
+  localStorage.setItem("cart", JSON.stringify(cart));
+  tampilCart();
+
+  notif("Pesanan dikirim!");
 }
 
 /* SEARCH */
@@ -247,6 +293,8 @@ function cari(t){
   });
   show('produk');
 }
+
+tampil();
 </script>
 
 </body>
