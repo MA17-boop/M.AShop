@@ -1,0 +1,26 @@
+[
+  {
+    "nama": "Kaos Polos Hitam",
+    "harga": 75000,
+    "foto": "https://via.placeholder.com/150",
+    "kategori": "Pakaian",
+    "wa": "628123456789",
+    "alamat": "Jakarta Selatan"
+  },
+  {
+    "nama": "Headphone Gaming",
+    "harga": 350000,
+    "foto": "https://via.placeholder.com/150",
+    "kategori": "Elektronik",
+    "wa": "628987654321",
+    "alamat": "Bandung"
+  },
+  {
+    "nama": "Tas Ransel",
+    "harga": 120000,
+    "foto": "https://via.placeholder.com/150",
+    "kategori": "Umum",
+    "wa": "628112233445",
+    "alamat": "Surabaya"
+  }
+]
